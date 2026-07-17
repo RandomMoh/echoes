@@ -53,7 +53,6 @@ class Player extends PositionComponent
   bool isEchoing = false;
 
   // Progression & Checkpoints
-  int deaths = 0;
   Vector2 _currentCheckpoint = Vector2.zero();
 
   // Animation state
@@ -235,10 +234,11 @@ class Player extends PositionComponent
 
   void die() {
     game.deathPool.start(volume: 0.8);
-    deaths++;
-    if (deaths > 5) {
+    game.livesNotifier.value--;
+    
+    if (game.livesNotifier.value <= 0) {
       // Hard reset to level start
-      deaths = 0;
+      game.livesNotifier.value = 5;
       position = _spawnPoint.clone();
     } else {
       // Soft reset to checkpoint

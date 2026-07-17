@@ -71,6 +71,25 @@ class GameHUD extends StatelessWidget {
               ),
             ),
           ).animate().fadeIn(delay: 700.ms, duration: 800.ms),
+
+          // Health Bar
+          Positioned(
+            top: 24,
+            left: 24,
+            child: ValueListenableBuilder<int>(
+              valueListenable: game.livesNotifier,
+              builder: (context, lives, child) {
+                return Row(
+                  children: List.generate(5, (index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: PixelHeart(filled: index < lives),
+                    );
+                  }),
+                );
+              },
+            ),
+          ).animate().fadeIn(delay: 400.ms, duration: 800.ms),
         ],
       ),
     );
@@ -100,4 +119,51 @@ class GameHUD extends StatelessWidget {
       ),
     );
   }
+}
+
+class PixelHeart extends StatelessWidget {
+  final bool filled;
+  const PixelHeart({super.key, required this.filled});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = filled ? Colors.white : Colors.white.withValues(alpha: 0.2);
+    return CustomPaint(
+      size: const Size(21, 21),
+      painter: _HeartPainter(color),
+    );
+  }
+}
+
+class _HeartPainter extends CustomPainter {
+  final Color color;
+  _HeartPainter(this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = color..isAntiAlias = false;
+    final w = size.width / 7;
+    final h = size.height / 7;
+
+    void drawPixel(int x, int y) {
+      canvas.drawRect(Rect.fromLTWH(x * w, y * h, w, h), paint);
+    }
+
+    final pixels = [
+      [1,0], [2,0], [4,0], [5,0],
+      [0,1], [1,1], [2,1], [3,1], [4,1], [5,1], [6,1],
+      [0,2], [1,2], [2,2], [3,2], [4,2], [5,2], [6,2],
+      [0,3], [1,3], [2,3], [3,3], [4,3], [5,3], [6,3],
+      [1,4], [2,4], [3,4], [4,4], [5,4],
+      [2,5], [3,5], [4,5],
+      [3,6],
+    ];
+
+    for (var p in pixels) {
+      drawPixel(p[0], p[1]);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_HeartPainter old) => color != old.color;
 }

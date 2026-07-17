@@ -15,6 +15,7 @@ import 'background.dart';
 class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandlerComponents {
   late Player player;
   int currentLevelIndex = 0;
+  final ValueNotifier<int> livesNotifier = ValueNotifier<int>(5);
 
   static const double gravity = 2000;
   static const double tileSize = 32;
@@ -55,6 +56,8 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
     world.removeAll(world.children.query<Goal>());
     world.removeAll(world.children.query<Checkpoint>());
     world.removeAll(world.children.query<Player>());
+
+    livesNotifier.value = 5; // Reset lives on new level
 
     if (currentLevelIndex >= LevelData.levels.length) {
       // Game Over / Win State
