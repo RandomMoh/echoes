@@ -203,7 +203,7 @@ class Player extends PositionComponent
 
     if (overlapX > 0 && overlapY > 0) {
       // Fix internal edge seams: if the player is falling and near the top edge, treat it as a vertical landing.
-      bool isLanding = (playerCenterY < platformCenterY) && (overlapY < 12);
+      bool isLanding = (playerCenterY < platformCenterY) && (overlapY <= 6);
       
       if (overlapX < overlapY && !isLanding) {
         // Horizontal collision
