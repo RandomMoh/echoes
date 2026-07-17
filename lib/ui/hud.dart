@@ -24,7 +24,7 @@ class GameHUD extends StatelessWidget {
                   onPointerDown: () => game.movePlayerLeft(),
                   onPointerUp: () => game.stopPlayer(),
                 ),
-                const SizedBox(width: 24),
+                const SizedBox(width: 40),
                 _buildControlButton(
                   icon: Icons.keyboard_arrow_right,
                   onPointerDown: () => game.movePlayerRight(),
@@ -82,19 +82,20 @@ class GameHUD extends StatelessWidget {
     required VoidCallback onPointerUp,
   }) {
     return Listener(
+      behavior: HitTestBehavior.opaque,
       onPointerDown: (_) => onPointerDown(),
       onPointerUp: (_) => onPointerUp(),
       onPointerCancel: (_) => onPointerUp(),
       child: Container(
-        width: 80,
-        height: 80,
+        width: 100,
+        height: 100,
         decoration: BoxDecoration(
           color: EchoesTheme.background.withValues(alpha: 0.8),
           border: Border.all(color: EchoesTheme.whisperBorder, width: 2),
           borderRadius: BorderRadius.zero,
         ),
         child: Center(
-          child: Icon(icon, color: EchoesTheme.surface, size: 40),
+          child: Icon(icon, color: EchoesTheme.surface, size: 48),
         ),
       ),
     );
