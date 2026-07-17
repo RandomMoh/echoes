@@ -193,32 +193,40 @@ class Player extends PositionComponent
   }
 
   void _resolvePlatformCollision(Set<Vector2> points, StaticPlatform platform) {
-    if (points.length < 2) return;
+    final playerCenterX = position.x;
+    final playerCenterY = position.y;
+    final platformCenterX = platform.position.x + platform.size.x / 2;
+    final platformCenterY = platform.position.y + platform.size.y / 2;
 
-    final mid = (points.first + points.last) / 2;
-    
-    // Check previous Y center to determine if we came from above
-    final previousBottom = position.y - velocity.y * 0.016 + size.y / 2; // rough previous bottom
-    
-    // Landing on top
-    if (previousBottom <= platform.position.y + 4 && velocity.y >= 0) {
-      if (!isOnGround) {
-        triggerEcho(); // Trigger echo when landing
+    final overlapX = (size.x / 2 + platform.size.x / 2) - (playerCenterX - platformCenterX).abs();
+    final overlapY = (size.y / 2 + platform.size.y / 2) - (playerCenterY - platformCenterY).abs();
+
+    if (overlapX > 0 && overlapY > 0) {
+      if (overlapX < overlapY) {
+        // Horizontal collision
+        if (playerCenterX < platformCenterX) {
+          position.x -= overlapX;
+        } else {
+          position.x += overlapX;
+        }
+      } else {
+        // Vertical collision
+        if (playerCenterY < platformCenterY) {
+          // Landing on top
+          position.y -= overlapY;
+          if (!isOnGround && velocity.y > 0) {
+            triggerEcho();
+          }
+          isOnGround = true;
+          velocity.y = 0;
+        } else {
+          // Hitting from below
+          position.y += overlapY;
+          if (velocity.y < 0) {
+            velocity.y = 0;
+          }
+        }
       }
-      isOnGround = true;
-      velocity.y = 0;
-      position.y = platform.position.y - size.y / 2;
-    }
-    // Hitting from below
-    else if (position.y < platform.position.y + platform.size.y && velocity.y < 0 && previousBottom > platform.position.y + platform.size.y) {
-      velocity.y = 0;
-      position.y = platform.position.y + platform.size.y + size.y / 2;
-    }
-    // Hitting side
-    else {
-      final collisionNormal = position - mid;
-      final pushBack = collisionNormal.x > 0 ? 1 : -1;
-      position.x += pushBack * 3.0; // Stronger pushback to prevent phasing
     }
   }
 
