@@ -169,7 +169,7 @@ class Player extends PositionComponent
     }
 
     // Death check
-    if (position.y > game.size.y + 200) {
+    if (position.y > 2000) {
       respawn();
     }
   }
@@ -238,8 +238,8 @@ class Player extends PositionComponent
     
     if (game.livesNotifier.value <= 0) {
       // Hard reset to level start
-      game.livesNotifier.value = 5;
-      position = _spawnPoint.clone();
+      game.loadLevel();
+      return;
     } else {
       // Soft reset to checkpoint
       position = _currentCheckpoint.clone();

@@ -81,9 +81,15 @@ class GameHUD extends StatelessWidget {
               builder: (context, lives, child) {
                 return Row(
                   children: List.generate(5, (index) {
+                    final filled = index < lives;
                     return Padding(
                       padding: const EdgeInsets.only(right: 8.0),
-                      child: PixelHeart(filled: index < lives),
+                      child: PixelHeart(filled: filled)
+                          .animate(target: filled ? 0 : 1)
+                          .shakeX(hz: 8, amount: 3, duration: 400.ms, curve: Curves.easeInOut)
+                          .scale(begin: const Offset(1, 1), end: const Offset(1.2, 1.2), duration: 200.ms)
+                          .then()
+                          .scale(begin: const Offset(1.2, 1.2), end: const Offset(1, 1), duration: 200.ms),
                     );
                   }),
                 );
