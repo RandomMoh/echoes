@@ -84,6 +84,8 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
         } else if (char == '@') {
           player = Player(position: pos);
           world.add(player);
+          // Safe spawn: always guarantee a solid block directly beneath the player so they can't fall into spikes
+          world.add(StaticPlatform(position: Vector2(pos.x, pos.y + tileSize), size: size));
         }
       }
     }
