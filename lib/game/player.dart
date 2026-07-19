@@ -122,8 +122,12 @@ class Player extends PositionComponent
     game.world.add(EchoWave(position: position + size / 2, maxRadius: 1500, speed: 1200));
   }
 
+  Vector2 _previousPosition = Vector2.zero();
+
   @override
   void update(double dt) {
+    _previousPosition = position.clone();
+    isOnGround = false;
     super.update(dt);
 
     // Horizontal movement
@@ -192,42 +196,64 @@ class Player extends PositionComponent
   }
 
   void _resolvePlatformCollision(Set<Vector2> points, StaticPlatform platform) {
-    final playerCenterX = position.x;
-    final playerCenterY = position.y;
-    final platformCenterX = platform.position.x + platform.size.x / 2;
-    final platformCenterY = platform.position.y + platform.size.y / 2;
+    // Platform bounds
+    final platformTop = platform.position.y;
+    final platformBottom = platform.position.y + platform.size.y;
+    final platformLeft = platform.position.x;
+    final platformRight = platform.position.x + platform.size.x;
 
-    final overlapX = (size.x / 2 + platform.size.x / 2) - (playerCenterX - platformCenterX).abs();
-    final overlapY = (size.y / 2 + platform.size.y / 2) - (playerCenterY - platformCenterY).abs();
+    // Previous player bounds
+    final prevPlayerBottom = _previousPosition.y + size.y / 2;
+    final prevPlayerTop = _previousPosition.y - size.y / 2;
+    final prevPlayerRight = _previousPosition.x + size.x / 2;
+    final prevPlayerLeft = _previousPosition.x - size.x / 2;
 
-    if (overlapX > 0 && overlapY > 0) {
-      // Fix internal edge seams and high-velocity edge landings: 
-      // If the player is falling and is in the upper half of the platform, it's a top landing.
-      bool isLanding = (playerCenterY < platformCenterY) && (velocity.y > 0);
+    // Did we come from strictly outside the platform bounds?
+    bool fromAbove = prevPlayerBottom <= platformTop + 2.0;
+    bool fromBelow = prevPlayerTop >= platformBottom - 2.0;
+    bool fromLeft = prevPlayerRight <= platformLeft + 2.0;
+    bool fromRight = prevPlayerLeft >= platformRight - 2.0;
+
+    if (fromAbove && velocity.y > 0) {
+      // Landing on top
+      position.y = platformTop - size.y / 2;
+      if (!isOnGround) {
+        triggerEcho();
+      }
+      isOnGround = true;
+      velocity.y = 0;
+    } else if (fromBelow && velocity.y < 0) {
+      // Hitting from below
+      position.y = platformBottom + size.y / 2;
+      velocity.y = 0;
+    } else if (fromLeft && velocity.x > 0) {
+      // Hitting left side
+      position.x = platformLeft - size.x / 2;
+      velocity.x = 0;
+    } else if (fromRight && velocity.x < 0) {
+      // Hitting right side
+      position.x = platformRight + size.x / 2;
+      velocity.x = 0;
+    } else {
+      // Fallback: If spawned inside or moving diagonally and no bounds were strictly crossed (rare), fallback to overlap check
+      final overlapX = (size.x / 2 + platform.size.x / 2) - (position.x - (platform.position.x + platform.size.x / 2)).abs();
+      final overlapY = (size.y / 2 + platform.size.y / 2) - (position.y - (platform.position.y + platform.size.y / 2)).abs();
       
-      if (overlapX < overlapY && !isLanding) {
-        // Horizontal collision
-        if (playerCenterX < platformCenterX) {
+      if (overlapX < overlapY) {
+        if (position.x < platform.position.x + platform.size.x / 2) {
           position.x -= overlapX;
         } else {
           position.x += overlapX;
         }
       } else {
-        // Vertical collision
-        if (playerCenterY < platformCenterY) {
-          // Landing on top
+        if (position.y < platform.position.y + platform.size.y / 2) {
           position.y -= overlapY;
-          if (!isOnGround && velocity.y > 0) {
-            triggerEcho();
-          }
+          if (!isOnGround) triggerEcho();
           isOnGround = true;
           velocity.y = 0;
         } else {
-          // Hitting from below
           position.y += overlapY;
-          if (velocity.y < 0) {
-            velocity.y = 0;
-          }
+          if (velocity.y < 0) velocity.y = 0;
         }
       }
     }
