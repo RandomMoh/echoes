@@ -70,6 +70,7 @@ class Player extends PositionComponent
         ) {
     _spawnPoint = position.clone();
     _currentCheckpoint = position.clone();
+    _previousPosition = position.clone();
   }
 
   @override
@@ -198,6 +199,11 @@ class Player extends PositionComponent
   }
 
   void _resolvePlatformCollision(Set<Vector2> points, StaticPlatform platform) {
+    final overlapX = (size.x / 2 + platform.size.x / 2) - (position.x - (platform.position.x + platform.size.x / 2)).abs();
+    final overlapY = (size.y / 2 + platform.size.y / 2) - (position.y - (platform.position.y + platform.size.y / 2)).abs();
+
+    if (overlapX <= 0 || overlapY <= 0) return; // Ignore stale collisions
+
     // Platform bounds
     final platformTop = platform.position.y;
     final platformBottom = platform.position.y + platform.size.y;
@@ -217,30 +223,20 @@ class Player extends PositionComponent
     bool fromRight = prevPlayerLeft >= platformRight - 2.0;
 
     if (fromAbove && velocity.y > 0) {
-      // Landing on top
       position.y = platformTop - size.y / 2;
-      if (!_wasOnGround && !isOnGround) {
-        triggerEcho();
-      }
+      if (!_wasOnGround && !isOnGround) triggerEcho();
       isOnGround = true;
       velocity.y = 0;
     } else if (fromBelow && velocity.y < 0) {
-      // Hitting from below
       position.y = platformBottom + size.y / 2;
       velocity.y = 0;
     } else if (fromLeft && velocity.x > 0) {
-      // Hitting left side
       position.x = platformLeft - size.x / 2;
       velocity.x = 0;
     } else if (fromRight && velocity.x < 0) {
-      // Hitting right side
       position.x = platformRight + size.x / 2;
       velocity.x = 0;
     } else {
-      // Fallback: If spawned inside or moving diagonally and no bounds were strictly crossed (rare), fallback to overlap check
-      final overlapX = (size.x / 2 + platform.size.x / 2) - (position.x - (platform.position.x + platform.size.x / 2)).abs();
-      final overlapY = (size.y / 2 + platform.size.y / 2) - (position.y - (platform.position.y + platform.size.y / 2)).abs();
-      
       if (overlapX < overlapY) {
         if (position.x < platform.position.x + platform.size.x / 2) {
           position.x -= overlapX;
@@ -272,8 +268,11 @@ class Player extends PositionComponent
     } else {
       // Soft reset to checkpoint
       position = _currentCheckpoint.clone();
+      _previousPosition = position.clone();
+      velocity = Vector2.zero();
+      isOnGround = false;
+      _wasOnGround = false;
     }
-    velocity = Vector2.zero();
     triggerEcho();
   }
 
