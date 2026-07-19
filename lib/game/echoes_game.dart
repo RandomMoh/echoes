@@ -59,12 +59,7 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
 
     livesNotifier.value = 5; // Reset lives on new level
 
-    if (currentLevelIndex >= LevelData.levels.length) {
-      // Game Over / Win State
-      currentLevelIndex = 0; // loop for now
-    }
-
-    final levelMap = LevelData.levels[currentLevelIndex];
+    final levelMap = LevelData.generate(currentLevelIndex);
     
     // Parse level
     for (int y = 0; y < levelMap.length; y++) {
