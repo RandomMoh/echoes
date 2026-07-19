@@ -123,10 +123,12 @@ class Player extends PositionComponent
   }
 
   Vector2 _previousPosition = Vector2.zero();
+  bool _wasOnGround = false;
 
   @override
   void update(double dt) {
     _previousPosition = position.clone();
+    _wasOnGround = isOnGround;
     isOnGround = false;
     super.update(dt);
 
@@ -217,7 +219,7 @@ class Player extends PositionComponent
     if (fromAbove && velocity.y > 0) {
       // Landing on top
       position.y = platformTop - size.y / 2;
-      if (!isOnGround) {
+      if (!_wasOnGround && !isOnGround) {
         triggerEcho();
       }
       isOnGround = true;
@@ -248,7 +250,7 @@ class Player extends PositionComponent
       } else {
         if (position.y < platform.position.y + platform.size.y / 2) {
           position.y -= overlapY;
-          if (!isOnGround) triggerEcho();
+          if (!_wasOnGround && !isOnGround) triggerEcho();
           isOnGround = true;
           velocity.y = 0;
         } else {
