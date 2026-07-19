@@ -69,26 +69,42 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
     // Parse level
     for (int y = 0; y < levelMap.length; y++) {
       String row = levelMap[y];
-      for (int x = 0; x < row.length; x++) {
-        String char = row[x];
-        Vector2 pos = Vector2(x * tileSize, y * tileSize);
-        Vector2 size = Vector2(tileSize, tileSize);
-
+      int startX = -1;
+      
+      for (int x = 0; x <= row.length; x++) {
+        String char = x < row.length ? row[x] : '';
+        
         if (char == '#') {
-          world.add(StaticPlatform(position: pos, size: size));
-        } else if (char == '^') {
-          world.add(Spike(position: pos, size: size));
-        } else if (char == '*') {
-          world.add(Goal(position: pos, size: size));
-        } else if (char == 'C') {
-          world.add(Checkpoint(position: pos, size: size));
-        } else if (char == '+') {
-          world.add(Crystal(position: pos, size: size));
-        } else if (char == '@') {
-          player = Player(position: pos);
-          world.add(player);
-          // Safe spawn: always guarantee a solid block directly beneath the player so they can't fall into spikes
-          world.add(StaticPlatform(position: Vector2(pos.x, pos.y + tileSize), size: size));
+          if (startX == -1) startX = x;
+        } else {
+          if (startX != -1) {
+            // Create a wide platform from startX to x-1
+            double w = (x - startX) * tileSize;
+            world.add(StaticPlatform(
+              position: Vector2(startX * tileSize, y * tileSize), 
+              size: Vector2(w, tileSize)
+            ));
+            startX = -1;
+          }
+          
+          if (x < row.length) {
+            Vector2 pos = Vector2(x * tileSize, y * tileSize);
+            Vector2 sizeV = Vector2(tileSize, tileSize);
+            if (char == '^') {
+              world.add(Spike(position: pos, size: sizeV));
+            } else if (char == '*') {
+              world.add(Goal(position: pos, size: sizeV));
+            } else if (char == 'C') {
+              world.add(Checkpoint(position: pos, size: sizeV));
+            } else if (char == '+') {
+              world.add(Crystal(position: pos, size: sizeV));
+            } else if (char == '@') {
+              player = Player(position: pos);
+              world.add(player);
+              // Safe spawn: always guarantee a solid block directly beneath the player so they can't fall into spikes
+              world.add(StaticPlatform(position: Vector2(pos.x, pos.y + tileSize), size: sizeV));
+            }
+          }
         }
       }
     }
