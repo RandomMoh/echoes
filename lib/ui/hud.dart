@@ -46,30 +46,56 @@ class GameHUD extends StatelessWidget {
             ),
           ).animate().fadeIn(delay: 600.ms, duration: 800.ms).slideY(begin: 0.2, end: 0, curve: Curves.easeOutCubic),
 
-          // Pause Button
+          // Settings and Pause Buttons
           Positioned(
             top: 24,
             right: 24,
-            child: GestureDetector(
-              onTap: () {
-                game.pauseEngine();
-                game.overlays.add('pause');
-                game.overlays.remove('hud');
-              },
-              child: Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: EchoesTheme.background.withValues(alpha: 0.5),
-                  border: Border.all(color: EchoesTheme.whisperBorder, width: 2),
-                  borderRadius: BorderRadius.zero,
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    game.pauseEngine();
+                    game.overlays.add('settings');
+                    game.overlays.remove('hud');
+                  },
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    margin: const EdgeInsets.only(right: 16),
+                    decoration: BoxDecoration(
+                      color: EchoesTheme.background.withValues(alpha: 0.5),
+                      border: Border.all(color: EchoesTheme.whisperBorder, width: 2),
+                      borderRadius: BorderRadius.zero,
+                    ),
+                    child: const Icon(
+                      Icons.settings,
+                      color: EchoesTheme.surface,
+                      size: 20,
+                    ),
+                  ),
                 ),
-                child: const Icon(
-                  Icons.pause,
-                  color: EchoesTheme.surface,
-                  size: 20,
+                GestureDetector(
+                  onTap: () {
+                    game.pauseEngine();
+                    game.overlays.add('pause');
+                    game.overlays.remove('hud');
+                  },
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: EchoesTheme.background.withValues(alpha: 0.5),
+                      border: Border.all(color: EchoesTheme.whisperBorder, width: 2),
+                      borderRadius: BorderRadius.zero,
+                    ),
+                    child: const Icon(
+                      Icons.pause,
+                      color: EchoesTheme.surface,
+                      size: 20,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ).animate().fadeIn(delay: 700.ms, duration: 800.ms),
 
@@ -148,23 +174,54 @@ class GameHUD extends StatelessWidget {
     required VoidCallback onPointerDown,
     required VoidCallback onPointerUp,
   }) {
-    return Listener(
-      behavior: HitTestBehavior.opaque,
-      onPointerDown: (_) => onPointerDown(),
-      onPointerUp: (_) => onPointerUp(),
-      onPointerCancel: (_) => onPointerUp(),
-      child: Container(
-        width: 100,
-        height: 100,
-        decoration: BoxDecoration(
-          color: EchoesTheme.background.withValues(alpha: 0.8),
-          border: Border.all(color: EchoesTheme.whisperBorder, width: 2),
-          borderRadius: BorderRadius.zero,
-        ),
-        child: Center(
-          child: Icon(icon, color: EchoesTheme.surface, size: 48),
-        ),
-      ),
+    return ValueListenableBuilder<String>(
+      valueListenable: game.buttonSizeNotifier,
+      builder: (context, sizeType, child) {
+        return ValueListenableBuilder<String>(
+          valueListenable: game.buttonStyleNotifier,
+          builder: (context, styleType, child) {
+            
+            double size = sizeType == 'Small' ? 60.0 : 100.0;
+            double iconSize = sizeType == 'Small' ? 32.0 : 48.0;
+            
+            BoxDecoration decoration;
+            if (styleType == 'Circular') {
+              decoration = BoxDecoration(
+                color: EchoesTheme.background.withValues(alpha: 0.8),
+                border: Border.all(color: EchoesTheme.whisperBorder, width: 2),
+                shape: BoxShape.circle,
+              );
+            } else if (styleType == 'Rounded') {
+              decoration = BoxDecoration(
+                color: EchoesTheme.background.withValues(alpha: 0.8),
+                border: Border.all(color: EchoesTheme.whisperBorder, width: 2),
+                borderRadius: BorderRadius.circular(16),
+              );
+            } else { // Square
+              decoration = BoxDecoration(
+                color: EchoesTheme.background.withValues(alpha: 0.8),
+                border: Border.all(color: EchoesTheme.whisperBorder, width: 2),
+                borderRadius: BorderRadius.zero,
+              );
+            }
+
+            return Listener(
+              behavior: HitTestBehavior.opaque,
+              onPointerDown: (_) => onPointerDown(),
+              onPointerUp: (_) => onPointerUp(),
+              onPointerCancel: (_) => onPointerUp(),
+              child: Container(
+                width: size,
+                height: size,
+                decoration: decoration,
+                child: Center(
+                  child: Icon(icon, color: EchoesTheme.surface, size: iconSize),
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

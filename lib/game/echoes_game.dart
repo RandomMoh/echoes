@@ -19,6 +19,10 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
   final ValueNotifier<int> livesNotifier = ValueNotifier<int>(5);
   final ValueNotifier<int> scoreNotifier = ValueNotifier<int>(0);
   final ValueNotifier<int> highScoreNotifier = ValueNotifier<int>(0);
+  
+  final ValueNotifier<String> buttonSizeNotifier = ValueNotifier<String>('Big');
+  final ValueNotifier<String> buttonStyleNotifier = ValueNotifier<String>('Square');
+  
   late SharedPreferences prefs;
 
   static const double gravity = 2000;
@@ -42,6 +46,8 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
     
     prefs = await SharedPreferences.getInstance();
     highScoreNotifier.value = prefs.getInt('high_score') ?? 0;
+    buttonSizeNotifier.value = prefs.getString('button_size') ?? 'Big';
+    buttonStyleNotifier.value = prefs.getString('button_style') ?? 'Square';
 
     jumpPool = await FlameAudio.createPool('jump.wav', maxPlayers: 4);
     echoPool = await FlameAudio.createPool('echo.wav', maxPlayers: 2);

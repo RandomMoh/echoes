@@ -287,16 +287,18 @@ class Player extends PositionComponent
   void render(Canvas canvas) {
     super.render(canvas);
     
-
     final paint = Paint()..isAntiAlias = false;
 
+    // Calculate breathing
+    double breatheOffset = (isOnGround && velocity.x == 0) ? (math.sin(_time * 5) * 1.5) : 0;
 
+    // Main body (White)
     paint.color = Colors.white;
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.x, size.y), paint);
+    canvas.drawRect(Rect.fromLTWH(0, breatheOffset, size.x, 20 - breatheOffset), paint);
 
-
+    // Eyes (Dark)
     paint.color = const Color(0xFF18181B);
-    double eyeY = 4;
+    double eyeY = 4 + breatheOffset;
     double eyeHeight = _isBlinking ? 2 : 6;
     double eyeWidth = 4;
     
@@ -308,23 +310,47 @@ class Player extends PositionComponent
       canvas.drawRect(Rect.fromLTWH(8, eyeY, eyeWidth, eyeHeight), paint);
     }
 
-
-    paint.color = const Color(0xFF18181B);
+    // Scarf (Dark)
     double scarfStartX = facing == 1 ? 4.0 : size.x - 8.0;
-    double scarfY = 14.0;
+    double scarfY = 12.0 + breatheOffset;
     
-
     int segments = 3;
     double timeOffset = _time * 15;
     
     for (int i = 0; i < segments; i++) {
       double segmentX = scarfStartX - (facing * (i * 6));
-
       double waveY = ((math.sin(timeOffset - i) * 3).roundToDouble());
-
       waveY -= (velocity.y * 0.005).roundToDouble();
-      
       canvas.drawRect(Rect.fromLTWH(segmentX, scarfY + waveY, 6, 6), paint);
+    }
+
+    // Feet (White)
+    paint.color = Colors.white;
+    double foot1Y = 20;
+    double foot2Y = 20;
+
+    if (isOnGround) {
+      if (velocity.x != 0) {
+        // Running animation (alternating feet lifting up)
+        foot1Y = 20 - math.max(0.0, math.sin(_time * 25) * 4);
+        foot2Y = 20 - math.max(0.0, -math.sin(_time * 25) * 4);
+      } else {
+        // Standing still
+        foot1Y = 20;
+        foot2Y = 20;
+      }
+    } else {
+      // Jumping / falling (feet tucked up slightly)
+      foot1Y = 18;
+      foot2Y = 18;
+    }
+
+    if (facing == 1) {
+      canvas.drawRect(Rect.fromLTWH(4, foot1Y, 6, 4), paint);
+      canvas.drawRect(Rect.fromLTWH(14, foot2Y, 6, 4), paint);
+    } else {
+      canvas.drawRect(Rect.fromLTWH(14, foot1Y, 6, 4), paint);
+      canvas.drawRect(Rect.fromLTWH(4, foot2Y, 6, 4), paint);
     }
   }
 }

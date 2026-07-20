@@ -8,6 +8,7 @@ import 'game/echoes_game.dart';
 import 'ui/main_menu.dart';
 import 'ui/hud.dart';
 import 'ui/pause_menu.dart';
+import 'ui/settings_menu.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,6 +45,7 @@ class EchoesApp extends StatelessWidget {
             'mainMenu': (_, game) => MainMenu(game: game),
             'hud': (_, game) => GameHUD(game: game),
             'pause': (_, game) => PauseMenu(game: game),
+            'settings': (_, game) => SettingsMenu(game: game),
           },
           initialActiveOverlays: const ['mainMenu'],
         ),
