@@ -139,9 +139,10 @@ class GameHUD extends StatelessWidget {
                       builder: (context, score, child) {
                         return Text(
                           '${score.toString().padLeft(6, '0')}',
-                          style: GoogleFonts.pressStart2p(
+                          style: GoogleFonts.vt323(
                             color: Colors.white,
-                            fontSize: 20,
+                            fontSize: 32,
+                            height: 1.0,
                           ),
                         );
                       },
@@ -152,9 +153,10 @@ class GameHUD extends StatelessWidget {
                       builder: (context, highScore, child) {
                         return Text(
                           'HI ${highScore.toString().padLeft(6, '0')}',
-                          style: GoogleFonts.pressStart2p(
+                          style: GoogleFonts.vt323(
                             color: Colors.amberAccent,
-                            fontSize: 10,
+                            fontSize: 20,
+                            height: 1.0,
                           ),
                         );
                       },
