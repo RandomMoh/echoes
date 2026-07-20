@@ -128,6 +128,7 @@ class Player extends PositionComponent
 
   @override
   void update(double dt) {
+    if (dt > 0.033) dt = 0.033; // Cap dt to 30 FPS to prevent tunneling
     _previousPosition = position.clone();
     _wasOnGround = isOnGround;
     isOnGround = false;
@@ -216,13 +217,13 @@ class Player extends PositionComponent
     final prevPlayerRight = _previousPosition.x + size.x / 2;
     final prevPlayerLeft = _previousPosition.x - size.x / 2;
 
-    // Generous 12-pixel ledge grab tolerance: if feet were within top 12px, count as landing.
-    bool fromAbove = (prevPlayerBottom <= platformTop + 12.0) && velocity.y >= 0;
+    // True Sweep AABB check using previous position
+    bool fromAbove = prevPlayerBottom <= platformTop + 4.0;
     bool fromBelow = prevPlayerTop >= platformBottom - 4.0;
     bool fromLeft = prevPlayerRight <= platformLeft + 4.0;
     bool fromRight = prevPlayerLeft >= platformRight - 4.0;
 
-    if (fromAbove) {
+    if (fromAbove && velocity.y >= 0) {
       position.y = platformTop - size.y / 2;
       if (!_wasOnGround && !isOnGround) triggerEcho();
       isOnGround = true;
@@ -237,7 +238,7 @@ class Player extends PositionComponent
       position.x = platformRight + size.x / 2;
       velocity.x = 0;
     } else {
-      // Robust overlap fallback for deep penetrations
+      // Fallback: If sweep fails (should rarely happen with capped dt), push out on shortest axis
       if (overlapX < overlapY) {
         if (position.x < platform.position.x + platform.size.x / 2) {
           position.x -= overlapX;
