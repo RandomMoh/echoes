@@ -11,11 +11,15 @@ import 'checkpoint.dart';
 import 'levels_data.dart';
 import 'crystal.dart';
 import 'background.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandlerComponents {
   late Player player;
   int currentLevelIndex = 0;
   final ValueNotifier<int> livesNotifier = ValueNotifier<int>(5);
+  final ValueNotifier<int> scoreNotifier = ValueNotifier<int>(0);
+  final ValueNotifier<int> highScoreNotifier = ValueNotifier<int>(0);
+  late SharedPreferences prefs;
 
   static const double gravity = 2000;
   static const double tileSize = 32;
@@ -36,6 +40,8 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
 
     camera.viewfinder.anchor = Anchor.center;
     
+    prefs = await SharedPreferences.getInstance();
+    highScoreNotifier.value = prefs.getInt('high_score') ?? 0;
 
     jumpPool = await FlameAudio.createPool('jump.wav', maxPlayers: 4);
     echoPool = await FlameAudio.createPool('echo.wav', maxPlayers: 2);
@@ -123,4 +129,19 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
   void movePlayerRight() => player.moveRight();
   void stopPlayer() => player.stopMoving();
   void jumpPlayer() => player.jump();
+
+  @override
+  void update(double dt) {
+    super.update(dt);
+    try {
+      int newScore = (currentLevelIndex * 2000) + (player.position.x / 10).toInt();
+      if (newScore > scoreNotifier.value) {
+        scoreNotifier.value = newScore;
+        if (newScore > highScoreNotifier.value) {
+          highScoreNotifier.value = newScore;
+          prefs.setInt('high_score', newScore);
+        }
+      }
+    } catch (e) {} // Ignore if player not loaded yet
+  }
 }

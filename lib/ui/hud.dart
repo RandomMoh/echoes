@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../theme.dart';
 import '../game/echoes_game.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class GameHUD extends StatelessWidget {
   final EchoesGame game;
@@ -96,6 +97,47 @@ class GameHUD extends StatelessWidget {
               },
             ),
           ).animate().fadeIn(delay: 400.ms, duration: 800.ms),
+
+          // Score Display
+          Positioned(
+            top: 24,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    ValueListenableBuilder<int>(
+                      valueListenable: game.scoreNotifier,
+                      builder: (context, score, child) {
+                        return Text(
+                          '${score.toString().padLeft(6, '0')}',
+                          style: GoogleFonts.pressStart2p(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    ValueListenableBuilder<int>(
+                      valueListenable: game.highScoreNotifier,
+                      builder: (context, highScore, child) {
+                        return Text(
+                          'HI ${highScore.toString().padLeft(6, '0')}',
+                          style: GoogleFonts.pressStart2p(
+                            color: Colors.amberAccent,
+                            fontSize: 10,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ).animate().fadeIn(delay: 500.ms, duration: 800.ms),
         ],
       ),
     );
