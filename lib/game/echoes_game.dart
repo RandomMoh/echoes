@@ -43,8 +43,10 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
     checkpointPool = await FlameAudio.createPool('checkpoint.wav', maxPlayers: 1);
     winPool = await FlameAudio.createPool('win.wav', maxPlayers: 1);
     
-
     world.add(StarfieldBackground());
+
+    FlameAudio.bgm.initialize();
+    FlameAudio.bgm.play('bgm.wav', volume: 0.3);
 
     await loadLevel();
   }
