@@ -23,12 +23,12 @@ class StaticPlatform extends PositionComponent with HasGameReference<EchoesGame>
     final center = position + size / 2;
     final distance = center.distanceTo(player.position);
 
-    // If the wave hits, fully illuminate
+
     if (player.isEchoing && distance < player.echoRadius) {
       _opacity = 1.0;
     }
     
-    // Fade out slowly over time
+
     _opacity = (_opacity - dt * 0.5).clamp(0.0, 1.0);
   }
 
@@ -41,10 +41,10 @@ class StaticPlatform extends PositionComponent with HasGameReference<EchoesGame>
       ..color = Colors.white.withValues(alpha: _opacity)
       ..style = PaintingStyle.fill;
       
-    // Draw the box
+
     canvas.drawRect(size.toRect(), paint);
 
-    // Draw an inner border for pixel art style
+
     final borderPaint = Paint()
       ..isAntiAlias = false
       ..color = Colors.black.withValues(alpha: _opacity * 0.5)

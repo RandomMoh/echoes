@@ -21,7 +21,7 @@ class Checkpoint extends PositionComponent with CollisionCallbacks {
 
   @override
   void render(Canvas canvas) {
-    // Checkpoints are always dimly visible so players have something to aim for
+
     final paint = Paint()
       ..isAntiAlias = false
       ..color = isActive ? Colors.tealAccent.withValues(alpha: 0.8) : Colors.teal.withValues(alpha: 0.2)
@@ -30,7 +30,7 @@ class Checkpoint extends PositionComponent with CollisionCallbacks {
 
     canvas.drawRect(size.toRect(), paint);
     
-    // Draw a small inner pixel diamond if active
+
     if (isActive) {
       final inner = Paint()..isAntiAlias = false..color = Colors.tealAccent..style = PaintingStyle.fill;
       double cx = size.x / 2;

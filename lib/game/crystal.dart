@@ -37,15 +37,15 @@ class Crystal extends PositionComponent with HasGameReference<EchoesGame> {
       ..color = Colors.cyanAccent.withValues(alpha: _opacity)
       ..style = PaintingStyle.fill;
       
-    // Draw a pixelated diamond crystal
+
     double cx = size.x / 2;
     double cy = size.y / 2 + math.sin(_time * 2) * 4; // float up and down
     
-    // Core
+
     canvas.drawRect(Rect.fromLTWH(cx - 4, cy - 8, 8, 16), paint);
     canvas.drawRect(Rect.fromLTWH(cx - 8, cy - 4, 16, 8), paint);
     
-    // Sparkles
+
     if (_opacity > 0.5) {
       final sparklePaint = Paint()
         ..isAntiAlias = false

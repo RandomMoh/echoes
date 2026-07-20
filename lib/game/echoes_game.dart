@@ -33,24 +33,24 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
 
   @override
   Future<void> onLoad() async {
-    // Setup camera viewfinder
+
     camera.viewfinder.anchor = Anchor.center;
     
-    // Preload audio using AudioPools for zero latency
+
     jumpPool = await FlameAudio.createPool('jump.wav', maxPlayers: 4);
     echoPool = await FlameAudio.createPool('echo.wav', maxPlayers: 2);
     deathPool = await FlameAudio.createPool('death.wav', maxPlayers: 1);
     checkpointPool = await FlameAudio.createPool('checkpoint.wav', maxPlayers: 1);
     winPool = await FlameAudio.createPool('win.wav', maxPlayers: 1);
     
-    // Add immersive background
+
     world.add(StarfieldBackground());
 
     await loadLevel();
   }
 
   Future<void> loadLevel() async {
-    // Clear existing level components
+
     world.removeAll(world.children.query<StaticPlatform>());
     world.removeAll(world.children.query<Spike>());
     world.removeAll(world.children.query<Goal>());
@@ -61,7 +61,7 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
 
     final levelMap = LevelData.generate(currentLevelIndex);
     
-    // Parse level
+
     for (int y = 0; y < levelMap.length; y++) {
       String row = levelMap[y];
       int startX = -1;
@@ -73,7 +73,7 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
           if (startX == -1) startX = x;
         } else {
           if (startX != -1) {
-            // Create a wide platform from startX to x-1
+
             double w = (x - startX) * tileSize;
             world.add(StaticPlatform(
               position: Vector2(startX * tileSize, y * tileSize), 
@@ -96,7 +96,7 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
             } else if (char == '@') {
               player = Player(position: pos);
               world.add(player);
-              // Safe spawn: always guarantee a solid block directly beneath the player so they can't fall into spikes
+
               world.add(StaticPlatform(position: Vector2(pos.x, pos.y + tileSize), size: sizeV));
             }
           }
@@ -104,10 +104,10 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
       }
     }
 
-    // Add boundaries (optional)
+
     world.add(ScreenHitbox());
 
-    // Camera follow player
+
     camera.follow(player, horizontalOnly: false, verticalOnly: false);
   }
 
@@ -116,7 +116,7 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
     loadLevel();
   }
 
-  // Player controls triggered by UI
+
   void movePlayerLeft() => player.moveLeft();
   void movePlayerRight() => player.moveRight();
   void stopPlayer() => player.stopMoving();

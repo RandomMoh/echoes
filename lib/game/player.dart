@@ -48,14 +48,14 @@ class Player extends PositionComponent
 
   Vector2 _spawnPoint = Vector2.zero();
 
-  // For the echo effect
+
   double echoRadius = 0.0;
   bool isEchoing = false;
 
-  // Progression & Checkpoints
+
   Vector2 _currentCheckpoint = Vector2.zero();
 
-  // Animation state
+
   int facing = 1; // 1 for right, -1 for left
   double _time = 0;
   double _blinkTimer = 2.0;
@@ -65,7 +65,7 @@ class Player extends PositionComponent
   Player({required Vector2 position})
       : super(
           position: position,
-          size: Vector2(24, 24), // Minimalist square
+          size: Vector2(24, 24),
           anchor: Anchor.center,
         ) {
     _spawnPoint = position.clone();
@@ -119,7 +119,7 @@ class Player extends PositionComponent
     echoRadius = 0;
     game.echoPool.start(volume: 0.6);
     
-    // Spawn visual wave
+
     game.world.add(EchoWave(position: position + size / 2, maxRadius: 1500, speed: 1200));
   }
 
@@ -133,20 +133,20 @@ class Player extends PositionComponent
     isOnGround = false;
     super.update(dt);
 
-    // Horizontal movement
+
     velocity.x = _horizontalInput * moveSpeed;
     if (_horizontalInput != 0) {
       facing = _horizontalInput;
     }
 
-    // Apply gravity
+
     velocity.y += EchoesGame.gravity * dt;
     velocity.y = velocity.y.clamp(-jumpForce, maxFallSpeed);
 
-    // Apply velocity
+
     position += velocity * dt;
 
-    // Animation Timers
+
     _time += dt;
     _blinkTimer -= dt;
     if (_blinkTimer <= 0) {
@@ -154,20 +154,20 @@ class Player extends PositionComponent
       _blinkTimer = _isBlinking ? 0.15 : 2.0 + math.Random().nextDouble() * 3.0;
     }
 
-    // Particle Trail
+
     if (_horizontalInput != 0 && isOnGround) {
       _particleTimer -= dt;
       if (_particleTimer <= 0) {
          game.world.add(DustParticle(
-           position: position.clone()..y += size.y / 2, // spawn at feet
+           position: position.clone()..y += size.y / 2,
            velocity: Vector2(-_horizontalInput * 40.0, -10.0 + (math.Random().nextDouble() - 0.5) * 20),
            life: 0.3 + math.Random().nextDouble() * 0.3,
          ));
-         _particleTimer = 0.05; // spawn every 50ms
+         _particleTimer = 0.05;
       }
     }
 
-    // Update Echo effect
+
     if (isEchoing) {
       echoRadius += 1200 * dt; // Echo expands fast
       if (echoRadius > 1500) {
@@ -175,7 +175,7 @@ class Player extends PositionComponent
       }
     }
 
-    // Death check
+
     if (position.y > 2000) {
       respawn();
     }
@@ -183,6 +183,8 @@ class Player extends PositionComponent
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (isRemoving || other.isRemoving) return; // Prevent ghost collisions across levels
+
     if (other is StaticPlatform) {
       _resolvePlatformCollision(intersectionPoints, other);
     } else if (other is Spike) {
@@ -204,19 +206,18 @@ class Player extends PositionComponent
 
     if (overlapX <= 0 || overlapY <= 0) return; // Ignore stale collisions
 
-    // Platform bounds
     final platformTop = platform.position.y;
     final platformBottom = platform.position.y + platform.size.y;
     final platformLeft = platform.position.x;
     final platformRight = platform.position.x + platform.size.x;
 
-    // Previous player bounds
+
     final prevPlayerBottom = _previousPosition.y + size.y / 2;
     final prevPlayerTop = _previousPosition.y - size.y / 2;
     final prevPlayerRight = _previousPosition.x + size.x / 2;
     final prevPlayerLeft = _previousPosition.x - size.x / 2;
 
-    // Did we come from strictly outside the platform bounds?
+
     bool fromAbove = prevPlayerBottom <= platformTop + 2.0;
     bool fromBelow = prevPlayerTop >= platformBottom - 2.0;
     bool fromLeft = prevPlayerRight <= platformLeft + 2.0;
@@ -262,11 +263,11 @@ class Player extends PositionComponent
     game.livesNotifier.value--;
     
     if (game.livesNotifier.value <= 0) {
-      // Hard reset to level start
+
       game.loadLevel();
       return;
     } else {
-      // Soft reset to checkpoint
+
       position = _currentCheckpoint.clone();
       _previousPosition = position.clone();
       velocity = Vector2.zero();
@@ -284,14 +285,14 @@ class Player extends PositionComponent
   void render(Canvas canvas) {
     super.render(canvas);
     
-    // Pixel-art drawing style: Disable anti-aliasing
+
     final paint = Paint()..isAntiAlias = false;
 
-    // Body (White Square)
+
     paint.color = Colors.white;
     canvas.drawRect(Rect.fromLTWH(0, 0, size.x, size.y), paint);
 
-    // Eyes (Charcoal black, 2x2 or 2x4 pixels)
+
     paint.color = const Color(0xFF18181B);
     double eyeY = 4;
     double eyeHeight = _isBlinking ? 2 : 6;
@@ -305,20 +306,20 @@ class Player extends PositionComponent
       canvas.drawRect(Rect.fromLTWH(8, eyeY, eyeWidth, eyeHeight), paint);
     }
 
-    // Scarf (Pixelated steps)
+
     paint.color = const Color(0xFF18181B);
     double scarfStartX = facing == 1 ? 4.0 : size.x - 8.0;
     double scarfY = 14.0;
     
-    // Calculate simple wave offsets for scarf segments
+
     int segments = 3;
     double timeOffset = _time * 15;
     
     for (int i = 0; i < segments; i++) {
       double segmentX = scarfStartX - (facing * (i * 6));
-      // Integer math for pixelated waving
+
       double waveY = ((math.sin(timeOffset - i) * 3).roundToDouble());
-      // Adjust slightly for falling/jumping
+
       waveY -= (velocity.y * 0.005).roundToDouble();
       
       canvas.drawRect(Rect.fromLTWH(segmentX, scarfY + waveY, 6, 6), paint);

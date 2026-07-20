@@ -24,7 +24,7 @@ class Goal extends PositionComponent with CollisionCallbacks {
 
   @override
   void render(Canvas canvas) {
-    // A pulsing beacon
+
     double pulse = (math.sin(_time * 5) + 1) / 2; // 0 to 1
     
     final paint = Paint()
@@ -32,7 +32,7 @@ class Goal extends PositionComponent with CollisionCallbacks {
       ..color = Colors.amber.withValues(alpha: 0.5 + (pulse * 0.5))
       ..style = PaintingStyle.fill;
 
-    // Draw a pixelated portal (staggered blocks)
+
     double step = size.x / 4;
     canvas.drawRect(Rect.fromLTWH(step, 0, step * 2, size.y), paint);
     canvas.drawRect(Rect.fromLTWH(0, step, size.x, size.y - step * 2), paint);

@@ -23,7 +23,7 @@ class EchoWave extends PositionComponent {
 
   @override
   void render(Canvas canvas) {
-    // Fade out as it expands
+
     double opacity = 1.0 - (radius / maxRadius).clamp(0.0, 1.0);
     if (opacity <= 0) return;
 

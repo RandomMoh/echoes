@@ -35,7 +35,7 @@ class StarfieldBackground extends PositionComponent with HasGameReference<Echoes
   @override
   void update(double dt) {
     super.update(dt);
-    // Move stars slightly for a twinkle effect or drift
+
     for (var star in _stars) {
       star.brightness += (math.sin(game.currentTime() * star.speed) * 0.01);
       star.brightness = star.brightness.clamp(0.1, 0.6);
@@ -48,7 +48,7 @@ class StarfieldBackground extends PositionComponent with HasGameReference<Echoes
     final cameraPos = game.camera.viewfinder.position;
     
     for (var star in _stars) {
-      // Parallax effect: stars move slower than the camera
+
       double drawX = star.position.x - (cameraPos.x * (star.speed / 50.0));
       double drawY = star.position.y - (cameraPos.y * (star.speed / 50.0));
       

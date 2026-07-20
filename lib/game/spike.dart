@@ -13,7 +13,7 @@ class Spike extends PositionComponent with HasGameReference<EchoesGame>, Collisi
 
   @override
   Future<void> onLoad() async {
-    // Spikes are a bit smaller than the tile for forgiveness
+
     add(RectangleHitbox(
       position: Vector2(4, 10),
       size: Vector2(size.x - 8, size.y - 10),
@@ -43,7 +43,7 @@ class Spike extends PositionComponent with HasGameReference<EchoesGame>, Collisi
       ..color = Colors.white.withValues(alpha: _opacity) // Minimalist theme
       ..style = PaintingStyle.fill;
       
-    // Draw a basic pixelated spike (like a stepped pyramid)
+
     double cx = size.x / 2;
     double bottom = size.y;
     
