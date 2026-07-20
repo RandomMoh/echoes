@@ -211,19 +211,18 @@ class Player extends PositionComponent
     final platformLeft = platform.position.x;
     final platformRight = platform.position.x + platform.size.x;
 
-
     final prevPlayerBottom = _previousPosition.y + size.y / 2;
     final prevPlayerTop = _previousPosition.y - size.y / 2;
     final prevPlayerRight = _previousPosition.x + size.x / 2;
     final prevPlayerLeft = _previousPosition.x - size.x / 2;
 
+    // Generous 12-pixel ledge grab tolerance: if feet were within top 12px, count as landing.
+    bool fromAbove = (prevPlayerBottom <= platformTop + 12.0) && velocity.y >= 0;
+    bool fromBelow = prevPlayerTop >= platformBottom - 4.0;
+    bool fromLeft = prevPlayerRight <= platformLeft + 4.0;
+    bool fromRight = prevPlayerLeft >= platformRight - 4.0;
 
-    bool fromAbove = prevPlayerBottom <= platformTop + 2.0;
-    bool fromBelow = prevPlayerTop >= platformBottom - 2.0;
-    bool fromLeft = prevPlayerRight <= platformLeft + 2.0;
-    bool fromRight = prevPlayerLeft >= platformRight - 2.0;
-
-    if (fromAbove && velocity.y > 0) {
+    if (fromAbove) {
       position.y = platformTop - size.y / 2;
       if (!_wasOnGround && !isOnGround) triggerEcho();
       isOnGround = true;
@@ -238,11 +237,14 @@ class Player extends PositionComponent
       position.x = platformRight + size.x / 2;
       velocity.x = 0;
     } else {
+      // Robust overlap fallback for deep penetrations
       if (overlapX < overlapY) {
         if (position.x < platform.position.x + platform.size.x / 2) {
           position.x -= overlapX;
+          velocity.x = 0;
         } else {
           position.x += overlapX;
+          velocity.x = 0;
         }
       } else {
         if (position.y < platform.position.y + platform.size.y / 2) {
