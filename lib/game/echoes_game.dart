@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandlerComponents {
   late Player player;
+  double playerStartX = 0;
   int currentLevelIndex = 0;
   final ValueNotifier<int> livesNotifier = ValueNotifier<int>(5);
   final ValueNotifier<int> scoreNotifier = ValueNotifier<int>(0);
@@ -109,6 +110,7 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
               world.add(Crystal(position: pos, size: sizeV));
             } else if (char == '@') {
               player = Player(position: pos);
+              playerStartX = pos.x;
               world.add(player);
 
               world.add(StaticPlatform(position: Vector2(pos.x, pos.y + tileSize), size: sizeV));
@@ -140,7 +142,7 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
   void update(double dt) {
     super.update(dt);
     try {
-      int posScore = (player.position.x / 10).toInt();
+      int posScore = ((player.position.x - playerStartX) / 10).toInt();
       if (posScore < 0) posScore = 0;
       int newScore = (currentLevelIndex * 2000) + posScore;
       scoreNotifier.value = newScore;

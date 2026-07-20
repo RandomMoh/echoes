@@ -265,7 +265,7 @@ class Player extends PositionComponent
     game.livesNotifier.value--;
     
     if (game.livesNotifier.value <= 0) {
-
+      game.currentLevelIndex = 0;
       game.loadLevel();
       return;
     } else {
