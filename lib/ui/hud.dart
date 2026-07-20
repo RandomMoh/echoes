@@ -139,10 +139,17 @@ class GameHUD extends StatelessWidget {
                       builder: (context, score, child) {
                         return Text(
                           '${score.toString().padLeft(6, '0')}',
-                          style: GoogleFonts.vt323(
+                          style: GoogleFonts.pressStart2p(
                             color: Colors.white,
-                            fontSize: 32,
+                            fontSize: 24,
                             height: 1.0,
+                            shadows: [
+                              const Shadow(
+                                offset: Offset(2, 2),
+                                blurRadius: 0,
+                                color: Colors.black,
+                              ),
+                            ],
                           ),
                         );
                       },
@@ -153,10 +160,17 @@ class GameHUD extends StatelessWidget {
                       builder: (context, highScore, child) {
                         return Text(
                           'HI ${highScore.toString().padLeft(6, '0')}',
-                          style: GoogleFonts.vt323(
+                          style: GoogleFonts.pressStart2p(
                             color: Colors.amberAccent,
-                            fontSize: 20,
+                            fontSize: 12,
                             height: 1.0,
+                            shadows: [
+                              const Shadow(
+                                offset: Offset(2, 2),
+                                blurRadius: 0,
+                                color: Colors.black,
+                              ),
+                            ],
                           ),
                         );
                       },
