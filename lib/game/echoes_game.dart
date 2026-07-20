@@ -140,7 +140,9 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
   void update(double dt) {
     super.update(dt);
     try {
-      int newScore = (currentLevelIndex * 2000) + math.max(0, (player.position.x / 10).toInt());
+      int posScore = (player.position.x / 10).toInt();
+      if (posScore < 0) posScore = 0;
+      int newScore = (currentLevelIndex * 2000) + posScore;
       scoreNotifier.value = newScore;
       
       if (newScore > highScoreNotifier.value) {
