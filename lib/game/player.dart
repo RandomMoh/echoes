@@ -107,7 +107,6 @@ class Player extends PositionComponent
     velocity.y = -jumpForce;
     isOnGround = false;
     game.jumpPool.start(volume: 0.5);
-    triggerEcho();
   }
 
   void moveLeft() => _horizontalInput = -1;
@@ -217,8 +216,8 @@ class Player extends PositionComponent
     final prevPlayerRight = _previousPosition.x + size.x / 2;
     final prevPlayerLeft = _previousPosition.x - size.x / 2;
 
-    // True Sweep AABB check using previous position
-    bool fromAbove = prevPlayerBottom <= platformTop + 4.0;
+    // Generous 12-pixel ledge grab tolerance: if feet were within top 12px, count as landing.
+    bool fromAbove = prevPlayerBottom <= platformTop + 12.0;
     bool fromBelow = prevPlayerTop >= platformBottom - 4.0;
     bool fromLeft = prevPlayerRight <= platformLeft + 4.0;
     bool fromRight = prevPlayerLeft >= platformRight - 4.0;
