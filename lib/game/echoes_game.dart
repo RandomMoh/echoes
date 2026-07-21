@@ -159,11 +159,7 @@ class EchoesGame extends FlameGame
 
   void nextLevel() {
     currentLevelIndex++;
-    crystalScore =
-        0; // Reset crystal score on next level (optional, but standard)
-    if (currentLevelIndex >= levels.length) {
-      currentLevelIndex = 0; // wrap around or go to a win screen
-    }
+    crystalScore = 0; // Reset crystal score on next level
     loadLevel();
   }
 
