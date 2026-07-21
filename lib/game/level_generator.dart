@@ -46,12 +46,17 @@ class LevelGenerator {
       
       int gap = random.nextInt(maxGap - minGap + 1) + minGap;
       
+      bool willHaveMovingPlatform = difficulty >= 4 && random.nextDouble() < 0.2; // 20% chance per jump to be a huge gap
+      if (willHaveMovingPlatform) {
+        gap = 8; // Force a massive gap specifically for the moving platform
+      }
+      
       int heightChange = random.nextInt(6) - 2;
       if (heightChange > maxJumpHeight) heightChange = maxJumpHeight;
       if (difficulty > 5 && random.nextBool()) heightChange -= 1; // Steeper drops
 
-      // Intelligent safety: don't combine max gap with max height jump
-      if (gap == 4 && heightChange > 2) {
+      // Intelligent safety: don't combine max gap with max height jump, unless it's a moving platform gap
+      if (!willHaveMovingPlatform && gap == 4 && heightChange > 2) {
         heightChange = 2;
       }
       
@@ -63,9 +68,9 @@ class LevelGenerator {
       
       currentX += gap;
       
-      // Spawn moving platforms in large gaps at high difficulty
-      if (difficulty >= 4 && gap >= 3 && random.nextDouble() < 0.4) {
-        int movingX = currentX - (gap ~/ 2) - 1;
+      // Spawn moving platforms perfectly in the middle of these huge gaps
+      if (willHaveMovingPlatform) {
+        int movingX = currentX - (gap ~/ 2);
         int movingY = (oldY + currentY) ~/ 2;
         map[movingY][movingX] = random.nextBool() ? 'V' : 'H';
       }
@@ -102,7 +107,7 @@ class LevelGenerator {
       if (random.nextDouble() < 0.1) {
         // Place checkpoint at the end of the platform to avoid the middle spike
         map[currentY - 1][currentX + platformWidth - 1] = 'C';
-      } else if (platformsSinceLastStar > 3 && random.nextDouble() < 0.6) {
+      } else if (platformsSinceLastStar > 5 && random.nextDouble() < 0.4) {
         map[currentY - 4][currentX + platformWidth ~/ 2] = '+'; // Spawn them far higher
         platformsSinceLastStar = 0;
       }
