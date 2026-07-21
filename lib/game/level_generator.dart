@@ -107,7 +107,9 @@ class LevelGenerator {
         map[currentY - 1][currentX + platformWidth - 1] = 'C';
       } else if (difficulty >= 3 && platformsSinceLastStar > 15 && random.nextDouble() < 0.2) {
         int heightOffset = random.nextBool() ? 4 : 5;
-        map[currentY - heightOffset][currentX + platformWidth ~/ 2] = '+';
+        int targetY = currentY - heightOffset;
+        if (targetY < 0) targetY = 0;
+        map[targetY][currentX + platformWidth ~/ 2] = '+';
         platformsSinceLastStar = 0;
       } else if (difficulty >= 5 &&
           platformsSinceLastHeart > 10 &&
