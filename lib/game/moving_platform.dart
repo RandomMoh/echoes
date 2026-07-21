@@ -7,7 +7,7 @@ enum MovementAxis { horizontal, vertical }
 
 class MovingPlatform extends StaticPlatform {
   final MovementAxis axis;
-  final double distance;
+  final double moveDistance;
   final double speed;
   Vector2 velocity = Vector2.zero();
   
@@ -18,7 +18,7 @@ class MovingPlatform extends StaticPlatform {
     required Vector2 position,
     required Vector2 size,
     required this.axis,
-    this.distance = 96.0, // 3 tiles
+    this.moveDistance = 96.0, // 3 tiles
     this.speed = 2.0,
   }) : super(position: position, size: size);
 
@@ -36,9 +36,9 @@ class MovingPlatform extends StaticPlatform {
     Vector2 prevPosition = position.clone();
 
     if (axis == MovementAxis.vertical) {
-      position.y = _startPosition.y + math.sin(_time * speed) * distance;
+      position.y = _startPosition.y + math.sin(_time * speed) * moveDistance;
     } else {
-      position.x = _startPosition.x + math.sin(_time * speed) * distance;
+      position.x = _startPosition.x + math.sin(_time * speed) * moveDistance;
     }
     
     // Calculate instantaneous velocity for friction/riding logic
