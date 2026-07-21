@@ -229,6 +229,10 @@ class Player extends PositionComponent
         game.checkpointPool.start(volume: 0.8);
       }
       other.collect();
+    } else if (other is Crystal && !other.isCollected) {
+      other.collect();
+      game.echoPool.start(volume: 0.5);
+      game.addCrystalScore(500);
     }
     super.onCollision(intersectionPoints, other);
   }

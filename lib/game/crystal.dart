@@ -7,8 +7,15 @@ class Crystal extends PositionComponent with HasGameReference<EchoesGame> {
   double _opacity = 0.0;
   double _time = 0;
 
+  bool isCollected = false;
+
   Crystal({required Vector2 position, required Vector2 size})
     : super(position: position, size: size);
+
+  void collect() {
+    isCollected = true;
+    removeFromParent();
+  }
 
   @override
   void update(double dt) {

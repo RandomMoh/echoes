@@ -22,6 +22,12 @@ class EchoesGame extends FlameGame
   int currentLevelIndex = 0;
   final ValueNotifier<int> livesNotifier = ValueNotifier<int>(5);
   final ValueNotifier<int> scoreNotifier = ValueNotifier<int>(0);
+  int crystalScore = 0;
+
+  void addCrystalScore(int points) {
+    crystalScore += points;
+  }
+
   final ValueNotifier<int> highScoreNotifier = ValueNotifier<int>(0);
 
   final ValueNotifier<String> buttonSizeNotifier = ValueNotifier<String>('Big');
@@ -153,6 +159,11 @@ class EchoesGame extends FlameGame
 
   void nextLevel() {
     currentLevelIndex++;
+    crystalScore =
+        0; // Reset crystal score on next level (optional, but standard)
+    if (currentLevelIndex >= levels.length) {
+      currentLevelIndex = 0; // wrap around or go to a win screen
+    }
     loadLevel();
   }
 
@@ -167,7 +178,7 @@ class EchoesGame extends FlameGame
     try {
       int posScore = ((player.position.x - playerStartX) / 10).toInt();
       if (posScore < 0) posScore = 0;
-      int newScore = (currentLevelIndex * 2000) + posScore;
+      int newScore = (currentLevelIndex * 2000) + posScore + crystalScore;
       scoreNotifier.value = newScore;
 
       if (newScore > highScoreNotifier.value) {
