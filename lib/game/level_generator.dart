@@ -36,6 +36,7 @@ class LevelGenerator {
     }
     
     currentX += 5;
+    int platformsSinceLastStar = 2;
     
     while (currentX < width - 10) {
 
@@ -63,7 +64,7 @@ class LevelGenerator {
       currentX += gap;
       
       // Spawn moving platforms in large gaps at high difficulty
-      if (difficulty > 8 && gap >= 3 && random.nextDouble() < 0.4) {
+      if (difficulty >= 4 && gap >= 3 && random.nextDouble() < 0.4) {
         int movingX = currentX - (gap ~/ 2) - 1;
         int movingY = (oldY + currentY) ~/ 2;
         map[movingY][movingX] = random.nextBool() ? 'V' : 'H';
@@ -101,9 +102,12 @@ class LevelGenerator {
       if (random.nextDouble() < 0.1) {
         // Place checkpoint at the end of the platform to avoid the middle spike
         map[currentY - 1][currentX + platformWidth - 1] = 'C';
-      } else if (random.nextDouble() < 0.3) {
+      } else if (platformsSinceLastStar > 3 && random.nextDouble() < 0.6) {
         map[currentY - 4][currentX + platformWidth ~/ 2] = '+'; // Spawn them far higher
+        platformsSinceLastStar = 0;
       }
+      
+      platformsSinceLastStar++;
       
       currentX += platformWidth;
     }
