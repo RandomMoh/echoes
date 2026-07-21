@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'echoes_game.dart';
 import 'level.dart';
 import 'echo_wave.dart';
+import 'crystal.dart';
+import 'heart.dart';
 import 'checkpoint.dart';
 import 'spike.dart';
 import 'goal.dart';
@@ -225,6 +227,12 @@ class Player extends PositionComponent
     } else if (other is Goal) {
       game.winPool.start(volume: 0.8);
       game.nextLevel();
+    } else if (other is HeartPickup) {
+      if (game.livesNotifier.value < 5) {
+        game.livesNotifier.value++;
+        game.checkpointPool.start(volume: 0.8); // play sound
+      }
+      other.collect();
     }
     super.onCollision(intersectionPoints, other);
   }

@@ -37,6 +37,7 @@ class LevelGenerator {
     
     currentX += 5;
     int platformsSinceLastStar = 2;
+    int platformsSinceLastHeart = 0;
     
     while (currentX < width - 10) {
 
@@ -110,9 +111,13 @@ class LevelGenerator {
       } else if (platformsSinceLastStar > 5 && random.nextDouble() < 0.4) {
         map[currentY - 4][currentX + platformWidth ~/ 2] = '+'; // Spawn them far higher
         platformsSinceLastStar = 0;
+      } else if (difficulty >= 5 && platformsSinceLastHeart > 10 && random.nextDouble() < 0.3) {
+        map[currentY - 3][currentX + platformWidth ~/ 2] = 'h'; // Heart spawn
+        platformsSinceLastHeart = 0;
       }
       
       platformsSinceLastStar++;
+      platformsSinceLastHeart++;
       
       currentX += platformWidth;
     }

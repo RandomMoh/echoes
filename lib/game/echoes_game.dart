@@ -12,6 +12,7 @@ import 'levels_data.dart';
 import 'crystal.dart';
 import 'background.dart';
 import 'moving_platform.dart';
+import 'heart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandlerComponents {
@@ -109,6 +110,8 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
               world.add(Checkpoint(position: pos, size: sizeV));
             } else if (char == '+') {
               world.add(Crystal(position: pos, size: sizeV));
+            } else if (char == 'h') {
+              world.add(HeartPickup(position: Vector2(x * 32.0, y * 32.0)));
             } else if (char == '@') {
               player = Player(position: pos);
               playerStartX = pos.x;
