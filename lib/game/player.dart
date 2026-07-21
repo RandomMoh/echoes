@@ -18,9 +18,12 @@ class DustParticle extends PositionComponent {
   double life;
   double maxLife;
 
-  DustParticle({required Vector2 position, required this.velocity, this.life = 0.5}) 
-      : maxLife = 0.5,
-        super(position: position, size: Vector2(4, 4), anchor: Anchor.center);
+  DustParticle({
+    required Vector2 position,
+    required this.velocity,
+    this.life = 0.5,
+  }) : maxLife = 0.5,
+       super(position: position, size: Vector2(4, 4), anchor: Anchor.center);
 
   @override
   void update(double dt) {
@@ -33,14 +36,16 @@ class DustParticle extends PositionComponent {
 
   @override
   void render(Canvas canvas) {
-    final paint = Paint()..color = Colors.white.withValues(alpha: (life / maxLife).clamp(0.0, 1.0));
+    final paint = Paint()
+      ..color = Colors.white.withValues(
+        alpha: (life / maxLife).clamp(0.0, 1.0),
+      );
     canvas.drawRect(size.toRect(), paint);
   }
 }
 
 class Player extends PositionComponent
     with HasGameReference<EchoesGame>, CollisionCallbacks, KeyboardHandler {
-  
   static const double moveSpeed = 250;
   static const double jumpForce = 750;
   static const double maxFallSpeed = 800;
@@ -51,31 +56,24 @@ class Player extends PositionComponent
 
   Vector2 _spawnPoint = Vector2.zero();
 
-
   double echoRadius = 0.0;
   bool isEchoing = false;
 
-
   Vector2 _currentCheckpoint = Vector2.zero();
 
-
-  int facing = 1; // 1 for right, -1 for left
+  int facing = 1;
   double _time = 0;
   double _blinkTimer = 2.0;
   bool _isBlinking = false;
   double _particleTimer = 0;
-  
+
   double _jumpBufferTimer = 0.0;
   double _coyoteTimer = 0.0;
-  
+
   StaticPlatform? currentPlatform;
 
   Player({required Vector2 position})
-      : super(
-          position: position,
-          size: Vector2(24, 24),
-          anchor: Anchor.center,
-        ) {
+    : super(position: position, size: Vector2(24, 24), anchor: Anchor.center) {
     _spawnPoint = position.clone();
     _currentCheckpoint = position.clone();
     _previousPosition = position.clone();
@@ -100,8 +98,8 @@ class Player extends PositionComponent
 
     if (event is KeyDownEvent) {
       if ((event.logicalKey == LogicalKeyboardKey.space ||
-           event.logicalKey == LogicalKeyboardKey.keyW ||
-           event.logicalKey == LogicalKeyboardKey.arrowUp) &&
+              event.logicalKey == LogicalKeyboardKey.keyW ||
+              event.logicalKey == LogicalKeyboardKey.arrowUp) &&
           isOnGround) {
         jump();
       }
@@ -111,7 +109,7 @@ class Player extends PositionComponent
   }
 
   void jump() {
-    _jumpBufferTimer = 0.15; // 150ms jump buffer
+    _jumpBufferTimer = 0.15;
   }
 
   void moveLeft() => _horizontalInput = -1;
@@ -122,9 +120,10 @@ class Player extends PositionComponent
     isEchoing = true;
     echoRadius = 0;
     game.echoPool.start(volume: 0.6);
-    
 
-    game.world.add(EchoWave(position: position + size / 2, maxRadius: 1500, speed: 1200));
+    game.world.add(
+      EchoWave(position: position + size / 2, maxRadius: 1500, speed: 1200),
+    );
   }
 
   Vector2 _previousPosition = Vector2.zero();
@@ -132,14 +131,14 @@ class Player extends PositionComponent
 
   @override
   void update(double dt) {
-    if (dt > 0.033) dt = 0.033; // Cap dt to 30 FPS to prevent tunneling
-    
+    if (dt > 0.033) dt = 0.033;
+
     if (isOnGround) {
-      _coyoteTimer = 0.1; // 100ms coyote time
+      _coyoteTimer = 0.1;
     } else {
       _coyoteTimer -= dt;
     }
-    
+
     if (_jumpBufferTimer > 0) {
       _jumpBufferTimer -= dt;
       if (_coyoteTimer > 0) {
@@ -153,30 +152,25 @@ class Player extends PositionComponent
     }
 
     _previousPosition = position.clone();
-    
-    // Apply horizontal friction from moving platforms
+
     if (_wasOnGround && currentPlatform is MovingPlatform) {
       position.x += (currentPlatform as MovingPlatform).velocity.x * dt;
     }
 
     _wasOnGround = isOnGround;
     isOnGround = false;
-    currentPlatform = null; // Will be set in onCollision if still on ground
+    currentPlatform = null;
     super.update(dt);
-
 
     velocity.x = _horizontalInput * moveSpeed;
     if (_horizontalInput != 0) {
       facing = _horizontalInput;
     }
 
-
     velocity.y += EchoesGame.gravity * dt;
     velocity.y = velocity.y.clamp(-jumpForce, maxFallSpeed);
 
-
     position += velocity * dt;
-
 
     _time += dt;
     _blinkTimer -= dt;
@@ -185,27 +179,29 @@ class Player extends PositionComponent
       _blinkTimer = _isBlinking ? 0.15 : 2.0 + math.Random().nextDouble() * 3.0;
     }
 
-
     if (_horizontalInput != 0 && isOnGround) {
       _particleTimer -= dt;
       if (_particleTimer <= 0) {
-         game.world.add(DustParticle(
-           position: position.clone()..y += size.y / 2,
-           velocity: Vector2(-_horizontalInput * 40.0, -10.0 + (math.Random().nextDouble() - 0.5) * 20),
-           life: 0.3 + math.Random().nextDouble() * 0.3,
-         ));
-         _particleTimer = 0.05;
+        game.world.add(
+          DustParticle(
+            position: position.clone()..y += size.y / 2,
+            velocity: Vector2(
+              -_horizontalInput * 40.0,
+              -10.0 + (math.Random().nextDouble() - 0.5) * 20,
+            ),
+            life: 0.3 + math.Random().nextDouble() * 0.3,
+          ),
+        );
+        _particleTimer = 0.05;
       }
     }
 
-
     if (isEchoing) {
-      echoRadius += 1200 * dt; // Echo expands fast
+      echoRadius += 1200 * dt;
       if (echoRadius > 1500) {
         isEchoing = false;
       }
     }
-
 
     if (position.y > 2000) {
       respawn();
@@ -214,7 +210,7 @@ class Player extends PositionComponent
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    if (isRemoving || other.isRemoving) return; // Prevent ghost collisions across levels
+    if (isRemoving || other.isRemoving) return;
 
     if (other is StaticPlatform) {
       _resolvePlatformCollision(intersectionPoints, other);
@@ -230,7 +226,7 @@ class Player extends PositionComponent
     } else if (other is HeartPickup) {
       if (game.livesNotifier.value < 5) {
         game.livesNotifier.value++;
-        game.checkpointPool.start(volume: 0.8); // play sound
+        game.checkpointPool.start(volume: 0.8);
       }
       other.collect();
     }
@@ -238,10 +234,14 @@ class Player extends PositionComponent
   }
 
   void _resolvePlatformCollision(Set<Vector2> points, StaticPlatform platform) {
-    final overlapX = (size.x / 2 + platform.size.x / 2) - (position.x - (platform.position.x + platform.size.x / 2)).abs();
-    final overlapY = (size.y / 2 + platform.size.y / 2) - (position.y - (platform.position.y + platform.size.y / 2)).abs();
+    final overlapX =
+        (size.x / 2 + platform.size.x / 2) -
+        (position.x - (platform.position.x + platform.size.x / 2)).abs();
+    final overlapY =
+        (size.y / 2 + platform.size.y / 2) -
+        (position.y - (platform.position.y + platform.size.y / 2)).abs();
 
-    if (overlapX <= 0 || overlapY <= 0) return; // Ignore stale collisions
+    if (overlapX <= 0 || overlapY <= 0) return;
 
     final platformTop = platform.position.y;
     final platformBottom = platform.position.y + platform.size.y;
@@ -253,7 +253,6 @@ class Player extends PositionComponent
     final prevPlayerRight = _previousPosition.x + size.x / 2;
     final prevPlayerLeft = _previousPosition.x - size.x / 2;
 
-    // Generous 12-pixel ledge grab tolerance: if feet were within top 12px, count as landing.
     bool fromAbove = prevPlayerBottom <= platformTop + 12.0;
     bool fromBelow = prevPlayerTop >= platformBottom - 4.0;
     bool fromLeft = prevPlayerRight <= platformLeft + 4.0;
@@ -275,7 +274,6 @@ class Player extends PositionComponent
       position.x = platformRight + size.x / 2;
       velocity.x = 0;
     } else {
-      // Fallback: If sweep fails (should rarely happen with capped dt), push out on shortest axis
       if (overlapX < overlapY) {
         if (position.x < platform.position.x + platform.size.x / 2) {
           position.x -= overlapX;
@@ -302,13 +300,12 @@ class Player extends PositionComponent
   void die() {
     game.deathPool.start(volume: 0.8);
     game.livesNotifier.value--;
-    
+
     if (game.livesNotifier.value <= 0) {
       game.currentLevelIndex = 0;
       game.loadLevel();
       return;
     } else {
-
       position = _currentCheckpoint.clone();
       _previousPosition = position.clone();
       velocity = Vector2.zero();
@@ -325,22 +322,24 @@ class Player extends PositionComponent
   @override
   void render(Canvas canvas) {
     super.render(canvas);
-    
+
     final paint = Paint()..isAntiAlias = false;
 
-    // Calculate breathing
-    double breatheOffset = (isOnGround && velocity.x == 0) ? (math.sin(_time * 5) * 1.5) : 0;
+    double breatheOffset = (isOnGround && velocity.x == 0)
+        ? (math.sin(_time * 5) * 1.5)
+        : 0;
 
-    // Main body (White)
     paint.color = Colors.white;
-    canvas.drawRect(Rect.fromLTWH(0, breatheOffset, size.x, 20 - breatheOffset), paint);
+    canvas.drawRect(
+      Rect.fromLTWH(0, breatheOffset, size.x, 20 - breatheOffset),
+      paint,
+    );
 
-    // Eyes (Dark)
     paint.color = const Color(0xFF18181B);
     double eyeY = 4 + breatheOffset;
     double eyeHeight = _isBlinking ? 2 : 6;
     double eyeWidth = 4;
-    
+
     if (facing == 1) {
       canvas.drawRect(Rect.fromLTWH(12, eyeY, eyeWidth, eyeHeight), paint);
       canvas.drawRect(Rect.fromLTWH(20, eyeY, eyeWidth, eyeHeight), paint);
@@ -349,13 +348,12 @@ class Player extends PositionComponent
       canvas.drawRect(Rect.fromLTWH(8, eyeY, eyeWidth, eyeHeight), paint);
     }
 
-    // Scarf (Dark)
     double scarfStartX = facing == 1 ? 4.0 : size.x - 8.0;
     double scarfY = 12.0 + breatheOffset;
-    
+
     int segments = 3;
     double timeOffset = _time * 15;
-    
+
     for (int i = 0; i < segments; i++) {
       double segmentX = scarfStartX - (facing * (i * 6));
       double waveY = ((math.sin(timeOffset - i) * 3).roundToDouble());
@@ -363,23 +361,19 @@ class Player extends PositionComponent
       canvas.drawRect(Rect.fromLTWH(segmentX, scarfY + waveY, 6, 6), paint);
     }
 
-    // Feet (White)
     paint.color = Colors.white;
     double foot1Y = 20;
     double foot2Y = 20;
 
     if (isOnGround) {
       if (velocity.x != 0) {
-        // Running animation (alternating feet lifting up)
         foot1Y = 20 - math.max(0.0, math.sin(_time * 25) * 4);
         foot2Y = 20 - math.max(0.0, -math.sin(_time * 25) * 4);
       } else {
-        // Standing still
         foot1Y = 20;
         foot2Y = 20;
       }
     } else {
-      // Jumping / falling (feet tucked up slightly)
       foot1Y = 18;
       foot2Y = 18;
     }

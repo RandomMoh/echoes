@@ -23,12 +23,11 @@ class EchoWave extends PositionComponent {
 
   @override
   void render(Canvas canvas) {
-
     double opacity = 1.0 - (radius / maxRadius).clamp(0.0, 1.0);
     if (opacity <= 0) return;
 
     final paint = Paint()
-      ..isAntiAlias = false // Retro look!
+      ..isAntiAlias = false
       ..color = Colors.white.withValues(alpha: opacity)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4.0;

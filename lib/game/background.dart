@@ -12,7 +12,8 @@ class Star {
   Star(this.position, this.size, this.speed, this.brightness);
 }
 
-class StarfieldBackground extends PositionComponent with HasGameReference<EchoesGame> {
+class StarfieldBackground extends PositionComponent
+    with HasGameReference<EchoesGame> {
   final List<Star> _stars = [];
   final int count = 200;
   final math.Random _random = math.Random();
@@ -20,15 +21,17 @@ class StarfieldBackground extends PositionComponent with HasGameReference<Echoes
   @override
   Future<void> onLoad() async {
     for (int i = 0; i < count; i++) {
-      _stars.add(Star(
-        Vector2(
-          _random.nextDouble() * 2000 - 500,
-          _random.nextDouble() * 1000 - 200,
+      _stars.add(
+        Star(
+          Vector2(
+            _random.nextDouble() * 2000 - 500,
+            _random.nextDouble() * 1000 - 200,
+          ),
+          _random.nextDouble() > 0.9 ? 2.0 : 1.0,
+          _random.nextDouble() * 10 + 2,
+          _random.nextDouble() * 0.5 + 0.1,
         ),
-        _random.nextDouble() > 0.9 ? 2.0 : 1.0, // Mostly 1x1 pixels, some 2x2
-        _random.nextDouble() * 10 + 2, // Parallax speed
-        _random.nextDouble() * 0.5 + 0.1, // Base brightness
-      ));
+      );
     }
   }
 
@@ -46,12 +49,11 @@ class StarfieldBackground extends PositionComponent with HasGameReference<Echoes
   void render(Canvas canvas) {
     final paint = Paint()..isAntiAlias = false;
     final cameraPos = game.camera.viewfinder.position;
-    
-    for (var star in _stars) {
 
+    for (var star in _stars) {
       double drawX = star.position.x - (cameraPos.x * (star.speed / 50.0));
       double drawY = star.position.y - (cameraPos.y * (star.speed / 50.0));
-      
+
       paint.color = Colors.white.withValues(alpha: star.brightness);
       canvas.drawRect(Rect.fromLTWH(drawX, drawY, star.size, star.size), paint);
     }

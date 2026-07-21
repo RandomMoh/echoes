@@ -30,9 +30,19 @@ class SettingsMenu extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
-            _buildSettingRow('BUTTON SIZE', ['Small', 'Big'], game.buttonSizeNotifier, 'button_size'),
+            _buildSettingRow(
+              'BUTTON SIZE',
+              ['Small', 'Big'],
+              game.buttonSizeNotifier,
+              'button_size',
+            ),
             const SizedBox(height: 16),
-            _buildSettingRow('BUTTON STYLE', ['Square', 'Rounded', 'Circular'], game.buttonStyleNotifier, 'button_style'),
+            _buildSettingRow(
+              'BUTTON STYLE',
+              ['Square', 'Rounded', 'Circular'],
+              game.buttonStyleNotifier,
+              'button_style',
+            ),
             const SizedBox(height: 32),
             _buildMenuButton('RESUME', () {
               game.overlays.remove('settings');
@@ -45,7 +55,12 @@ class SettingsMenu extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingRow(String label, List<String> options, ValueNotifier<String> notifier, String prefKey) {
+  Widget _buildSettingRow(
+    String label,
+    List<String> options,
+    ValueNotifier<String> notifier,
+    String prefKey,
+  ) {
     return ValueListenableBuilder<String>(
       valueListenable: notifier,
       builder: (context, currentValue, child) {
@@ -54,7 +69,10 @@ class SettingsMenu extends StatelessWidget {
           children: [
             Text(
               label,
-              style: GoogleFonts.pressStart2p(fontSize: 12, color: EchoesTheme.mutedSteel),
+              style: GoogleFonts.pressStart2p(
+                fontSize: 12,
+                color: EchoesTheme.mutedSteel,
+              ),
             ),
             const SizedBox(height: 8),
             Row(
@@ -67,17 +85,24 @@ class SettingsMenu extends StatelessWidget {
                     game.prefs.setString(prefKey, option);
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     margin: const EdgeInsets.only(right: 8),
                     decoration: BoxDecoration(
-                      color: isSelected ? EchoesTheme.surface : Colors.transparent,
+                      color: isSelected
+                          ? EchoesTheme.surface
+                          : Colors.transparent,
                       border: Border.all(color: EchoesTheme.surface, width: 2),
                     ),
                     child: Text(
                       option.toUpperCase(),
                       style: GoogleFonts.pressStart2p(
                         fontSize: 10,
-                        color: isSelected ? EchoesTheme.background : EchoesTheme.surface,
+                        color: isSelected
+                            ? EchoesTheme.background
+                            : EchoesTheme.surface,
                       ),
                     ),
                   ),

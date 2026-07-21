@@ -15,26 +15,32 @@ import 'moving_platform.dart';
 import 'heart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandlerComponents {
+class EchoesGame extends FlameGame
+    with HasCollisionDetection, HasKeyboardHandlerComponents {
   late Player player;
   double playerStartX = 0;
   int currentLevelIndex = 0;
   final ValueNotifier<int> livesNotifier = ValueNotifier<int>(5);
   final ValueNotifier<int> scoreNotifier = ValueNotifier<int>(0);
   final ValueNotifier<int> highScoreNotifier = ValueNotifier<int>(0);
-  
+
   final ValueNotifier<String> buttonSizeNotifier = ValueNotifier<String>('Big');
-  final ValueNotifier<String> buttonStyleNotifier = ValueNotifier<String>('Square');
-  
+  final ValueNotifier<String> buttonStyleNotifier = ValueNotifier<String>(
+    'Square',
+  );
+
   late SharedPreferences prefs;
 
   static const double gravity = 2000;
   static const double tileSize = 32;
 
-  EchoesGame() : super(camera: CameraComponent.withFixedResolution(width: 800, height: 450));
+  EchoesGame()
+    : super(
+        camera: CameraComponent.withFixedResolution(width: 800, height: 450),
+      );
 
   @override
-  Color backgroundColor() => const Color(0xFF18181B); // Charcoal Ink background
+  Color backgroundColor() => const Color(0xFF18181B);
 
   late AudioPool jumpPool;
   late AudioPool echoPool;
@@ -44,9 +50,8 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
 
   @override
   Future<void> onLoad() async {
-
     camera.viewfinder.anchor = Anchor.center;
-    
+
     prefs = await SharedPreferences.getInstance();
     highScoreNotifier.value = prefs.getInt('high_score') ?? 0;
     buttonSizeNotifier.value = prefs.getString('button_size') ?? 'Big';
@@ -55,9 +60,12 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
     jumpPool = await FlameAudio.createPool('jump.wav', maxPlayers: 4);
     echoPool = await FlameAudio.createPool('echo.wav', maxPlayers: 2);
     deathPool = await FlameAudio.createPool('death.wav', maxPlayers: 1);
-    checkpointPool = await FlameAudio.createPool('checkpoint.wav', maxPlayers: 1);
+    checkpointPool = await FlameAudio.createPool(
+      'checkpoint.wav',
+      maxPlayers: 1,
+    );
     winPool = await FlameAudio.createPool('win.wav', maxPlayers: 1);
-    
+
     world.add(StarfieldBackground());
 
     FlameAudio.bgm.initialize();
@@ -67,38 +75,37 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
   }
 
   Future<void> loadLevel() async {
-
     world.removeAll(world.children.query<StaticPlatform>());
     world.removeAll(world.children.query<Spike>());
     world.removeAll(world.children.query<Goal>());
     world.removeAll(world.children.query<Checkpoint>());
     world.removeAll(world.children.query<Player>());
 
-    livesNotifier.value = 5; // Reset lives on new level
+    livesNotifier.value = 5;
 
     final levelMap = LevelData.generate(currentLevelIndex);
-    
 
     for (int y = 0; y < levelMap.length; y++) {
       String row = levelMap[y];
       int startX = -1;
-      
+
       for (int x = 0; x <= row.length; x++) {
         String char = x < row.length ? row[x] : '';
-        
+
         if (char == '#') {
           if (startX == -1) startX = x;
         } else {
           if (startX != -1) {
-
             double w = (x - startX) * tileSize;
-            world.add(StaticPlatform(
-              position: Vector2(startX * tileSize, y * tileSize), 
-              size: Vector2(w, tileSize)
-            ));
+            world.add(
+              StaticPlatform(
+                position: Vector2(startX * tileSize, y * tileSize),
+                size: Vector2(w, tileSize),
+              ),
+            );
             startX = -1;
           }
-          
+
           if (x < row.length) {
             Vector2 pos = Vector2(x * tileSize, y * tileSize);
             Vector2 sizeV = Vector2(tileSize, tileSize);
@@ -117,22 +124,29 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
               playerStartX = pos.x;
               world.add(player);
 
-              world.add(StaticPlatform(position: Vector2(pos.x, pos.y + tileSize), size: sizeV));
+              world.add(
+                StaticPlatform(
+                  position: Vector2(pos.x, pos.y + tileSize),
+                  size: sizeV,
+                ),
+              );
             } else if (char == 'V' || char == 'H') {
-              world.add(MovingPlatform(
-                position: pos,
-                size: Vector2(tileSize * 2, tileSize), // Make moving platforms slightly wider
-                axis: char == 'V' ? MovementAxis.vertical : MovementAxis.horizontal,
-              ));
+              world.add(
+                MovingPlatform(
+                  position: pos,
+                  size: Vector2(tileSize * 2, tileSize),
+                  axis: char == 'V'
+                      ? MovementAxis.vertical
+                      : MovementAxis.horizontal,
+                ),
+              );
             }
           }
         }
       }
     }
 
-
     world.add(ScreenHitbox());
-
 
     camera.follow(player, horizontalOnly: false, verticalOnly: false);
   }
@@ -141,7 +155,6 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
     currentLevelIndex++;
     loadLevel();
   }
-
 
   void movePlayerLeft() => player.moveLeft();
   void movePlayerRight() => player.moveRight();
@@ -156,11 +169,11 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
       if (posScore < 0) posScore = 0;
       int newScore = (currentLevelIndex * 2000) + posScore;
       scoreNotifier.value = newScore;
-      
+
       if (newScore > highScoreNotifier.value) {
         highScoreNotifier.value = newScore;
         prefs.setInt('high_score', newScore);
       }
-    } catch (e) {} // Ignore if player not loaded yet
+    } catch (e) {}
   }
 }

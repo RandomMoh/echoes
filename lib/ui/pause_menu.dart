@@ -10,7 +10,7 @@ class PauseMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: EchoesTheme.background.withValues(alpha: 0.9), // Dark wash overlay
+      color: EchoesTheme.background.withValues(alpha: 0.9),
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -30,7 +30,10 @@ class PauseMenu extends StatelessWidget {
                 game.resumeEngine();
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 40,
+                  vertical: 16,
+                ),
                 decoration: BoxDecoration(
                   color: EchoesTheme.background,
                   border: Border.all(color: EchoesTheme.surface, width: 4),

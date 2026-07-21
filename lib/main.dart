@@ -12,17 +12,14 @@ import 'ui/settings_menu.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Keep screen alive
+
   WakelockPlus.enable();
 
-  // Force landscape mode for platformer
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
   ]);
-  
-  // Hide system UI (immersive mode)
+
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
   runApp(const EchoesApp());
@@ -40,7 +37,7 @@ class EchoesApp extends StatelessWidget {
       home: Scaffold(
         backgroundColor: EchoesTheme.background,
         body: GameWidget<EchoesGame>(
-          game: EchoesGame()..pauseEngine(), // Starts paused on Main Menu
+          game: EchoesGame()..pauseEngine(),
           overlayBuilderMap: {
             'mainMenu': (_, game) => MainMenu(game: game),
             'hud': (_, game) => GameHUD(game: game),

@@ -10,7 +10,7 @@ class MovingPlatform extends StaticPlatform {
   final double moveDistance;
   final double speed;
   Vector2 velocity = Vector2.zero();
-  
+
   late Vector2 _startPosition;
   double _time = 0;
 
@@ -18,7 +18,7 @@ class MovingPlatform extends StaticPlatform {
     required Vector2 position,
     required Vector2 size,
     required this.axis,
-    this.moveDistance = 96.0, // 3 tiles
+    this.moveDistance = 96.0,
     this.speed = 2.0,
   }) : super(position: position, size: size);
 
@@ -32,7 +32,7 @@ class MovingPlatform extends StaticPlatform {
   void update(double dt) {
     super.update(dt);
     _time += dt;
-    
+
     Vector2 prevPosition = position.clone();
 
     if (axis == MovementAxis.vertical) {
@@ -40,25 +40,22 @@ class MovingPlatform extends StaticPlatform {
     } else {
       position.x = _startPosition.x + math.sin(_time * speed) * moveDistance;
     }
-    
-    // Calculate instantaneous velocity for friction/riding logic
+
     velocity = (position - prevPosition) / dt;
   }
-  
+
   @override
   void render(Canvas canvas) {
-    // Add a slight visual distinction for moving platforms
     super.render(canvas);
-    
+
     if (opacity <= 0.0) return;
-    
+
     final paint = Paint()
       ..isAntiAlias = false
       ..color = Colors.cyanAccent.withValues(alpha: opacity * 0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
-      
-    // Draw an inner glowing border
+
     canvas.drawRect(Rect.fromLTWH(4, 4, size.x - 8, size.y - 8), paint);
   }
 }
