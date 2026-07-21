@@ -105,8 +105,8 @@ class LevelGenerator {
 
       if (random.nextDouble() < 0.1) {
         map[currentY - 1][currentX + platformWidth - 1] = 'C';
-      } else if (platformsSinceLastStar > 5 && random.nextDouble() < 0.4) {
-        map[currentY - 4][currentX + platformWidth ~/ 2] = '+';
+      } else if (platformsSinceLastStar > 10 && random.nextDouble() < 0.3) {
+        map[currentY - 5][currentX + platformWidth ~/ 2] = '+';
         platformsSinceLastStar = 0;
       } else if (difficulty >= 5 &&
           platformsSinceLastHeart > 10 &&
