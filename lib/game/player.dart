@@ -9,6 +9,7 @@ import 'echo_wave.dart';
 import 'checkpoint.dart';
 import 'spike.dart';
 import 'goal.dart';
+import 'moving_platform.dart';
 
 class DustParticle extends PositionComponent {
   Vector2 velocity;
@@ -61,6 +62,8 @@ class Player extends PositionComponent
   double _blinkTimer = 2.0;
   bool _isBlinking = false;
   double _particleTimer = 0;
+  
+  StaticPlatform? currentPlatform;
 
   Player({required Vector2 position})
       : super(
@@ -129,8 +132,15 @@ class Player extends PositionComponent
   void update(double dt) {
     if (dt > 0.033) dt = 0.033; // Cap dt to 30 FPS to prevent tunneling
     _previousPosition = position.clone();
+    
+    // Apply horizontal friction from moving platforms
+    if (_wasOnGround && currentPlatform is MovingPlatform) {
+      position.x += (currentPlatform as MovingPlatform).velocity.x * dt;
+    }
+
     _wasOnGround = isOnGround;
     isOnGround = false;
+    currentPlatform = null; // Will be set in onCollision if still on ground
     super.update(dt);
 
 
@@ -226,6 +236,7 @@ class Player extends PositionComponent
       position.y = platformTop - size.y / 2;
       if (!_wasOnGround && !isOnGround) triggerEcho();
       isOnGround = true;
+      currentPlatform = platform;
       velocity.y = 0;
     } else if (fromBelow && velocity.y < 0) {
       position.y = platformBottom + size.y / 2;
@@ -251,6 +262,7 @@ class Player extends PositionComponent
           position.y -= overlapY;
           if (!_wasOnGround && !isOnGround) triggerEcho();
           isOnGround = true;
+          currentPlatform = platform;
           velocity.y = 0;
         } else {
           position.y += overlapY;

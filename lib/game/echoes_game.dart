@@ -11,6 +11,7 @@ import 'checkpoint.dart';
 import 'levels_data.dart';
 import 'crystal.dart';
 import 'background.dart';
+import 'moving_platform.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandlerComponents {
@@ -114,6 +115,12 @@ class EchoesGame extends FlameGame with HasCollisionDetection, HasKeyboardHandle
               world.add(player);
 
               world.add(StaticPlatform(position: Vector2(pos.x, pos.y + tileSize), size: sizeV));
+            } else if (char == 'V' || char == 'H') {
+              world.add(MovingPlatform(
+                position: pos,
+                size: Vector2(tileSize * 2, tileSize), // Make moving platforms slightly wider
+                axis: char == 'V' ? MovementAxis.vertical : MovementAxis.horizontal,
+              ));
             }
           }
         }

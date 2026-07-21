@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'echoes_game.dart';
 
 class StaticPlatform extends PositionComponent with HasGameReference<EchoesGame>, CollisionCallbacks {
-  double _opacity = 0.0;
+  double opacity = 0.0;
 
   StaticPlatform({
     required Vector2 position,
@@ -25,20 +25,20 @@ class StaticPlatform extends PositionComponent with HasGameReference<EchoesGame>
 
 
     if (player.isEchoing && distance < player.echoRadius) {
-      _opacity = 1.0;
+      opacity = 1.0;
     }
     
 
-    _opacity = (_opacity - dt * 0.5).clamp(0.0, 1.0);
+    opacity = (opacity - dt * 0.5).clamp(0.0, 1.0);
   }
 
   @override
   void render(Canvas canvas) {
-    if (_opacity <= 0.0) return;
+    if (opacity <= 0.0) return;
     
     final paint = Paint()
       ..isAntiAlias = false
-      ..color = Colors.white.withValues(alpha: _opacity)
+      ..color = Colors.white.withValues(alpha: opacity)
       ..style = PaintingStyle.fill;
       
 
@@ -47,7 +47,7 @@ class StaticPlatform extends PositionComponent with HasGameReference<EchoesGame>
 
     final borderPaint = Paint()
       ..isAntiAlias = false
-      ..color = Colors.black.withValues(alpha: _opacity * 0.5)
+      ..color = Colors.black.withValues(alpha: opacity * 0.5)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
     canvas.drawRect(Rect.fromLTWH(2, 2, size.x - 4, size.y - 4), borderPaint);

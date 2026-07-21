@@ -22,10 +22,10 @@ class Crystal extends PositionComponent with HasGameReference<EchoesGame> {
     final distance = center.distanceTo(player.position);
 
     if (player.isEchoing && distance < player.echoRadius) {
-      _opacity = 1.0;
+      _opacity = 0.35;
     }
     
-    _opacity = (_opacity - dt * 0.3).clamp(0.0, 1.0);
+    _opacity = (_opacity - dt * 0.1).clamp(0.0, 0.35);
   }
 
   @override
@@ -46,7 +46,7 @@ class Crystal extends PositionComponent with HasGameReference<EchoesGame> {
     canvas.drawRect(Rect.fromLTWH(cx - 8, cy - 4, 16, 8), paint);
     
 
-    if (_opacity > 0.5) {
+    if (_opacity > 0.2) {
       final sparklePaint = Paint()
         ..isAntiAlias = false
         ..color = Colors.white.withValues(alpha: _opacity);
