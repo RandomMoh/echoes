@@ -102,7 +102,7 @@ class LevelGenerator {
         // Place checkpoint at the end of the platform to avoid the middle spike
         map[currentY - 1][currentX + platformWidth - 1] = 'C';
       } else if (random.nextDouble() < 0.3) {
-        map[currentY - 3][currentX + platformWidth ~/ 2] = '+';
+        map[currentY - 4][currentX + platformWidth ~/ 2] = '+'; // Spawn them far higher
       }
       
       currentX += platformWidth;

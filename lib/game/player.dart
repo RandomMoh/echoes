@@ -63,6 +63,9 @@ class Player extends PositionComponent
   bool _isBlinking = false;
   double _particleTimer = 0;
   
+  double _jumpBufferTimer = 0.0;
+  double _coyoteTimer = 0.0;
+  
   StaticPlatform? currentPlatform;
 
   Player({required Vector2 position})
@@ -106,10 +109,7 @@ class Player extends PositionComponent
   }
 
   void jump() {
-    if (!isOnGround) return;
-    velocity.y = -jumpForce;
-    isOnGround = false;
-    game.jumpPool.start(volume: 0.5);
+    _jumpBufferTimer = 0.15; // 150ms jump buffer
   }
 
   void moveLeft() => _horizontalInput = -1;
@@ -131,6 +131,25 @@ class Player extends PositionComponent
   @override
   void update(double dt) {
     if (dt > 0.033) dt = 0.033; // Cap dt to 30 FPS to prevent tunneling
+    
+    if (isOnGround) {
+      _coyoteTimer = 0.1; // 100ms coyote time
+    } else {
+      _coyoteTimer -= dt;
+    }
+    
+    if (_jumpBufferTimer > 0) {
+      _jumpBufferTimer -= dt;
+      if (_coyoteTimer > 0) {
+        velocity.y = -jumpForce;
+        isOnGround = false;
+        _wasOnGround = false;
+        _coyoteTimer = 0;
+        _jumpBufferTimer = 0;
+        game.jumpPool.start(volume: 0.5);
+      }
+    }
+
     _previousPosition = position.clone();
     
     // Apply horizontal friction from moving platforms
