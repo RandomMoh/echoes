@@ -24,8 +24,8 @@ class StarfieldBackground extends PositionComponent
       _stars.add(
         Star(
           Vector2(
-            _random.nextDouble() * 2000 - 500,
-            _random.nextDouble() * 1000 - 200,
+            _random.nextDouble() * 850,
+            _random.nextDouble() * 500,
           ),
           _random.nextDouble() > 0.9 ? 2.0 : 1.0,
           _random.nextDouble() * 10 + 2,
@@ -49,10 +49,19 @@ class StarfieldBackground extends PositionComponent
   void render(Canvas canvas) {
     final paint = Paint()..isAntiAlias = false;
     final cameraPos = game.camera.viewfinder.position;
+    
+    double leftEdge = cameraPos.x - 425.0;
+    double topEdge = cameraPos.y - 250.0;
 
     for (var star in _stars) {
-      double drawX = star.position.x - (cameraPos.x * (star.speed / 50.0));
-      double drawY = star.position.y - (cameraPos.y * (star.speed / 50.0));
+      double parallaxX = star.position.x - (cameraPos.x * (star.speed / 50.0));
+      double parallaxY = star.position.y - (cameraPos.y * (star.speed / 50.0));
+
+      double drawX = leftEdge + ((parallaxX - leftEdge) % 850.0);
+      if (drawX < leftEdge) drawX += 850.0;
+
+      double drawY = topEdge + ((parallaxY - topEdge) % 500.0);
+      if (drawY < topEdge) drawY += 500.0;
 
       paint.color = Colors.white.withValues(alpha: star.brightness);
       canvas.drawRect(Rect.fromLTWH(drawX, drawY, star.size, star.size), paint);

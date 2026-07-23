@@ -45,8 +45,21 @@ class EchoesGame extends FlameGame
         camera: CameraComponent.withFixedResolution(width: 800, height: 450),
       );
 
+  static const List<Color> _levelColors = [
+    Color(0xFF18181B), // Level 0: Zinc 900
+    Color(0xFF1E1B4B), // Level 1: Indigo 950
+    Color(0xFF052E16), // Level 2: Green 950
+    Color(0xFF450A0A), // Level 3: Red 950
+    Color(0xFF312E81), // Level 4: Indigo 800
+    Color(0xFF0F172A), // Level 5: Slate 900
+    Color(0xFF172554), // Level 6: Blue 950
+    Color(0xFF2E1065), // Level 7: Violet 950
+    Color(0xFF3F3F46), // Level 8: Zinc 700
+    Color(0xFF064E3B), // Level 9: Emerald 900
+  ];
+
   @override
-  Color backgroundColor() => const Color(0xFF18181B);
+  Color backgroundColor() => _levelColors[currentLevelIndex % _levelColors.length];
 
   late AudioPool jumpPool;
   late AudioPool echoPool;
