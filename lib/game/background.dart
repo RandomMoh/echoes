@@ -4,16 +4,16 @@ import 'dart:math' as math;
 import 'echoes_game.dart';
 
 const List<Color> kLevelColors = [
-  Color(0xFF18181B), // Level 0: near-black zinc
-  Color(0xFF1E1B4B), // Level 1: deep indigo
-  Color(0xFF052E16), // Level 2: deep forest green
-  Color(0xFF450A0A), // Level 3: deep crimson
-  Color(0xFF1C1917), // Level 4: warm charcoal
-  Color(0xFF0F172A), // Level 5: midnight slate
-  Color(0xFF172554), // Level 6: deep navy
-  Color(0xFF2E1065), // Level 7: dark violet
-  Color(0xFF1C1917), // Level 8: stone black
-  Color(0xFF064E3B), // Level 9: deep emerald
+  Color(0xFF111114), // Level 0: near-black zinc (slightly lighter)
+  Color(0xFF13122E), // Level 1: muted indigo
+  Color(0xFF031A0D), // Level 2: muted forest green
+  Color(0xFF2A0606), // Level 3: muted crimson
+  Color(0xFF151210), // Level 4: muted charcoal
+  Color(0xFF090F1A), // Level 5: muted midnight slate
+  Color(0xFF0E1733), // Level 6: muted navy
+  Color(0xFF1C0A3E), // Level 7: muted violet
+  Color(0xFF141212), // Level 8: muted stone
+  Color(0xFF032C21), // Level 9: muted emerald
 ];
 
 class Star {
@@ -61,28 +61,36 @@ class StarfieldBackground extends PositionComponent
   @override
   void render(Canvas canvas) {
     final cameraPos = game.camera.viewfinder.position;
+    final zoom = game.camera.viewfinder.zoom;
+    final screenW = game.size.x / zoom;
+    final screenH = game.size.y / zoom;
     final levelIdx = game.currentLevelIndex % kLevelColors.length;
     final bgColor = kLevelColors[levelIdx];
 
     final bgPaint = Paint()..color = bgColor;
     canvas.drawRect(
-      Rect.fromLTWH(cameraPos.x - 425, cameraPos.y - 250, 850, 500),
+      Rect.fromLTWH(
+        cameraPos.x - screenW / 2,
+        cameraPos.y - screenH / 2,
+        screenW,
+        screenH,
+      ),
       bgPaint,
     );
 
     final paint = Paint()..isAntiAlias = false;
-    double leftEdge = cameraPos.x - 425.0;
-    double topEdge = cameraPos.y - 250.0;
+    double leftEdge = cameraPos.x - screenW / 2;
+    double topEdge = cameraPos.y - screenH / 2;
 
     for (var star in _stars) {
       double parallaxX = star.position.x - (cameraPos.x * (star.speed / 50.0));
       double parallaxY = star.position.y - (cameraPos.y * (star.speed / 50.0));
 
-      double drawX = leftEdge + ((parallaxX - leftEdge) % 850.0);
-      if (drawX < leftEdge) drawX += 850.0;
+      double drawX = leftEdge + ((parallaxX - leftEdge) % screenW);
+      if (drawX < leftEdge) drawX += screenW;
 
-      double drawY = topEdge + ((parallaxY - topEdge) % 500.0);
-      if (drawY < topEdge) drawY += 500.0;
+      double drawY = topEdge + ((parallaxY - topEdge) % screenH);
+      if (drawY < topEdge) drawY += screenH;
 
       paint.color = Colors.white.withValues(alpha: star.brightness);
       canvas.drawRect(Rect.fromLTWH(drawX, drawY, star.size, star.size), paint);

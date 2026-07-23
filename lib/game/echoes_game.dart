@@ -42,8 +42,14 @@ class EchoesGame extends FlameGame
 
   EchoesGame()
     : super(
-        camera: CameraComponent.withFixedResolution(width: 800, height: 450),
+        camera: CameraComponent(),
       );
+
+  @override
+  void onGameResize(Vector2 size) {
+    super.onGameResize(size);
+    camera.viewfinder.zoom = size.x / 800.0;
+  }
 
   @override
   Color backgroundColor() => const Color(0xFF18181B);
