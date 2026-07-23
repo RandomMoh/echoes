@@ -3,6 +3,19 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'echoes_game.dart';
 
+const List<Color> kLevelColors = [
+  Color(0xFF18181B), // Level 0: near-black zinc
+  Color(0xFF1E1B4B), // Level 1: deep indigo
+  Color(0xFF052E16), // Level 2: deep forest green
+  Color(0xFF450A0A), // Level 3: deep crimson
+  Color(0xFF1C1917), // Level 4: warm charcoal
+  Color(0xFF0F172A), // Level 5: midnight slate
+  Color(0xFF172554), // Level 6: deep navy
+  Color(0xFF2E1065), // Level 7: dark violet
+  Color(0xFF1C1917), // Level 8: stone black
+  Color(0xFF064E3B), // Level 9: deep emerald
+];
+
 class Star {
   Vector2 position;
   double size;
@@ -47,9 +60,17 @@ class StarfieldBackground extends PositionComponent
 
   @override
   void render(Canvas canvas) {
-    final paint = Paint()..isAntiAlias = false;
     final cameraPos = game.camera.viewfinder.position;
-    
+    final levelIdx = game.currentLevelIndex % kLevelColors.length;
+    final bgColor = kLevelColors[levelIdx];
+
+    final bgPaint = Paint()..color = bgColor;
+    canvas.drawRect(
+      Rect.fromLTWH(cameraPos.x - 425, cameraPos.y - 250, 850, 500),
+      bgPaint,
+    );
+
+    final paint = Paint()..isAntiAlias = false;
     double leftEdge = cameraPos.x - 425.0;
     double topEdge = cameraPos.y - 250.0;
 

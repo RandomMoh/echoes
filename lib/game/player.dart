@@ -109,7 +109,16 @@ class Player extends PositionComponent
   }
 
   void jump() {
-    _jumpBufferTimer = 0.15;
+    if (isOnGround) {
+      velocity.y = -jumpForce;
+      isOnGround = false;
+      _wasOnGround = false;
+      _coyoteTimer = 0;
+      _jumpBufferTimer = 0;
+      game.jumpPool.start(volume: 0.5);
+    } else {
+      _jumpBufferTimer = 0.15;
+    }
   }
 
   void moveLeft() => _horizontalInput = -1;
