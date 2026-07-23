@@ -69,6 +69,7 @@ class Player extends PositionComponent
 
   double _jumpBufferTimer = 0.0;
   double _coyoteTimer = 0.0;
+  double _invincibilityTimer = 0.0;
 
   StaticPlatform? currentPlatform;
 
@@ -183,6 +184,11 @@ class Player extends PositionComponent
 
     _time += dt;
     _blinkTimer -= dt;
+
+    if (_invincibilityTimer > 0) {
+      _invincibilityTimer -= dt;
+    }
+
     if (_blinkTimer <= 0) {
       _isBlinking = !_isBlinking;
       _blinkTimer = _isBlinking ? 0.15 : 2.0 + math.Random().nextDouble() * 3.0;
@@ -224,7 +230,7 @@ class Player extends PositionComponent
     if (other is StaticPlatform) {
       _resolvePlatformCollision(intersectionPoints, other);
     } else if (other is Spike) {
-      die();
+      if (_invincibilityTimer <= 0) die();
     } else if (other is Checkpoint && !other.isActive) {
       game.checkpointPool.start(volume: 0.7);
       other.activate();
@@ -311,6 +317,7 @@ class Player extends PositionComponent
   }
 
   void die() {
+    if (_invincibilityTimer > 0) return;
     game.deathPool.start(volume: 0.8);
     game.livesNotifier.value--;
 
@@ -324,6 +331,7 @@ class Player extends PositionComponent
       velocity = Vector2.zero();
       isOnGround = false;
       _wasOnGround = false;
+      _invincibilityTimer = 1.5;
     }
     triggerEcho();
   }
