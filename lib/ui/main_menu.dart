@@ -38,7 +38,9 @@ class _MainMenuState extends State<MainMenu> {
     return Scaffold(
       backgroundColor: EchoesTheme.background,
       body: SafeArea(
-        child: Padding(
+        child: Stack(
+          children: [
+            Padding(
           padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 64.0),
           child: Center(
             child: Column(
@@ -81,6 +83,7 @@ class _MainMenuState extends State<MainMenu> {
 
                 GestureDetector(
                   onTap: () {
+                    widget.game.jumpPool.start(volume: 0.4);
                     widget.game.overlays.remove('mainMenu');
                     widget.game.overlays.add('hud');
                     widget.game.resumeEngine();
@@ -113,7 +116,37 @@ class _MainMenuState extends State<MainMenu> {
             ),
           ),
         ),
-      ),
+        Positioned(
+          top: 24,
+          right: 24,
+          child: GestureDetector(
+            onTap: () {
+              widget.game.jumpPool.start(volume: 0.3);
+              widget.game.overlays.add('releaseNotes');
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                border: Border.all(
+                  color: EchoesTheme.surface.withValues(alpha: 0.5),
+                  width: 2,
+                ),
+              ),
+              child: Text(
+                '[ WHAT\'S NEW ]',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: EchoesTheme.surface.withValues(alpha: 0.7),
+                  fontSize: 10,
+                  letterSpacing: 2.0,
+                ),
+              ),
+            ).animate().fadeIn(delay: 1.5.seconds, duration: 800.ms),
+          ),
+        ),
+      ],
+    ),
+  ),
     );
   }
 }

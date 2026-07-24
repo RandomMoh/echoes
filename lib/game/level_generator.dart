@@ -87,14 +87,17 @@ class LevelGenerator {
       }
       if (platformWidth < 2) platformWidth = 2;
 
+      bool isCrumblingPlatform = difficulty >= 3 && !willHaveMovingPlatform && random.nextDouble() < min(0.3, difficulty * 0.05);
+      String platformChar = isCrumblingPlatform ? '%' : '#';
+
       for (int i = 0; i < platformWidth; i++) {
-        map[currentY][currentX + i] = '#';
+        map[currentY][currentX + i] = platformChar;
       }
 
       if (difficulty > 8 && platformWidth >= 5 && random.nextDouble() < 0.3) {
         int slabX = currentX + (platformWidth ~/ 2);
-        map[currentY - 1][slabX] = '#';
-        map[currentY - 2][slabX] = '#';
+        map[currentY - 1][slabX] = platformChar;
+        map[currentY - 2][slabX] = platformChar;
       } else if (difficulty > 3 &&
           platformWidth >= 4 &&
           random.nextDouble() < min(0.4, difficulty * 0.05)) {

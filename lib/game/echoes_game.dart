@@ -12,7 +12,9 @@ import 'levels_data.dart';
 import 'crystal.dart';
 import 'background.dart';
 import 'moving_platform.dart';
+import 'crumbling_platform.dart';
 import 'heart.dart';
+import 'dart:math' as math;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EchoesGame extends FlameGame
@@ -63,6 +65,13 @@ class EchoesGame extends FlameGame
   late AudioPool crystalPool;
 
   int _currentBgmLevel = -1;
+  double _shakeTimer = 0.0;
+  double _shakeIntensity = 0.0;
+
+  void shakeCamera(double duration, double intensity) {
+    _shakeTimer = duration;
+    _shakeIntensity = intensity;
+  }
 
   @override
   Future<void> onLoad() async {
@@ -93,6 +102,7 @@ class EchoesGame extends FlameGame
 
   Future<void> loadLevel() async {
     world.removeAll(world.children.query<StaticPlatform>());
+    world.removeAll(world.children.query<CrumblingPlatform>());
     world.removeAll(world.children.query<Spike>());
     world.removeAll(world.children.query<Goal>());
     world.removeAll(world.children.query<Checkpoint>());
@@ -123,22 +133,35 @@ class EchoesGame extends FlameGame
     for (int y = 0; y < levelMap.length; y++) {
       String row = levelMap[y];
       int startX = -1;
+      String currentType = '';
 
       for (int x = 0; x <= row.length; x++) {
         String char = x < row.length ? row[x] : '';
 
-        if (char == '#') {
-          if (startX == -1) startX = x;
+        if (char == '#' || char == '%') {
+          if (startX == -1) {
+            startX = x;
+            currentType = char;
+          } else if (currentType != char) {
+            double w = (x - startX) * tileSize;
+            if (currentType == '#') {
+              world.add(StaticPlatform(position: Vector2(startX * tileSize, y * tileSize), size: Vector2(w, tileSize)));
+            } else if (currentType == '%') {
+              world.add(CrumblingPlatform(position: Vector2(startX * tileSize, y * tileSize), size: Vector2(w, tileSize)));
+            }
+            startX = x;
+            currentType = char;
+          }
         } else {
           if (startX != -1) {
             double w = (x - startX) * tileSize;
-            world.add(
-              StaticPlatform(
-                position: Vector2(startX * tileSize, y * tileSize),
-                size: Vector2(w, tileSize),
-              ),
-            );
+            if (currentType == '#') {
+              world.add(StaticPlatform(position: Vector2(startX * tileSize, y * tileSize), size: Vector2(w, tileSize)));
+            } else if (currentType == '%') {
+              world.add(CrumblingPlatform(position: Vector2(startX * tileSize, y * tileSize), size: Vector2(w, tileSize)));
+            }
             startX = -1;
+            currentType = '';
           }
 
           if (x < row.length) {
@@ -211,5 +234,14 @@ class EchoesGame extends FlameGame
         prefs.setInt('high_score', newScore);
       }
     } catch (e) {}
+
+    if (_shakeTimer > 0) {
+      _shakeTimer -= dt;
+      // Because camera.follow is active, we apply a temporary offset to viewfinder position
+      camera.viewfinder.position += Vector2(
+        (math.Random().nextDouble() - 0.5) * _shakeIntensity,
+        (math.Random().nextDouble() - 0.5) * _shakeIntensity,
+      );
+    }
   }
 }

@@ -58,6 +58,11 @@ class _ReleaseNotesMenuState extends State<ReleaseNotesMenu> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
+                        '* ADDED CRUMBLING PLATFORMS & SCREEN SHAKE\n'
+                        '* FIXED GAPLESS AUDIO LOOPING BUG ON ANDROID\n'
+                        '* UPDATED TO PERFECT BGM PROGRESSION SPEED\n'
+                        '* PREVENTED DASHING WHEN FALLING OFF LEDGES\n'
+                        '* ADDED WHAT\'S NEW BUTTON & UI SOUNDS\n'
                         '* ADDED PROGRESSIVE 8-BIT BGM\n'
                         '* ADDED NEW DASH MECHANIC (JUMP IN MID-AIR)\n'
                         '* ADDED NEW DASH SOUND EFFECT\n'

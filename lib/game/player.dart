@@ -198,7 +198,7 @@ class Player extends PositionComponent
       game.dashPool.start(volume: 0.8);
       
       // Camera shake
-      game.camera.viewfinder.position = Vector2((math.Random().nextDouble() - 0.5) * 15, (math.Random().nextDouble() - 0.5) * 15);
+      game.shakeCamera(0.2, 5.0);
     } else {
       _jumpBufferTimer = 0.15;
     }
@@ -429,6 +429,7 @@ class Player extends PositionComponent
   void die() {
     if (_invincibilityTimer > 0) return;
     game.deathPool.start(volume: 0.8);
+    game.shakeCamera(0.4, 15.0);
     game.livesNotifier.value--;
 
     if (game.livesNotifier.value <= 0) {
