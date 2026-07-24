@@ -1,12 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../theme.dart';
 import '../game/echoes_game.dart';
 
-class MainMenu extends StatelessWidget {
+class MainMenu extends StatefulWidget {
   final EchoesGame game;
 
   const MainMenu({super.key, required this.game});
+
+  @override
+  State<MainMenu> createState() => _MainMenuState();
+}
+
+class _MainMenuState extends State<MainMenu> {
+  @override
+  void initState() {
+    super.initState();
+    _checkReleaseNotes();
+  }
+
+  Future<void> _checkReleaseNotes() async {
+    const currentVersion = '1.4.3';
+    final prefs = await SharedPreferences.getInstance();
+    final lastSeen = prefs.getString('last_seen_version');
+    if (lastSeen != currentVersion) {
+      widget.game.overlays.add('releaseNotes');
+      await prefs.setString('last_seen_version', currentVersion);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +78,9 @@ class MainMenu extends StatelessWidget {
 
                 GestureDetector(
                   onTap: () {
-                    game.overlays.remove('mainMenu');
-                    game.overlays.add('hud');
-                    game.resumeEngine();
+                    widget.game.overlays.remove('mainMenu');
+                    widget.game.overlays.add('hud');
+                    widget.game.resumeEngine();
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(
