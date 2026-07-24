@@ -106,7 +106,7 @@ class LevelGenerator {
         map[currentY - 1][spikeX] = '^';
       }
 
-      if (random.nextDouble() < 0.1) {
+      if (!isCrumblingPlatform && random.nextDouble() < 0.1) {
         map[currentY - 1][currentX + platformWidth - 1] = 'C';
       } else if (difficulty >= 3 && platformsSinceLastStar > 15 && random.nextDouble() < 0.2) {
         int heightOffset = random.nextBool() ? 4 : 5;
