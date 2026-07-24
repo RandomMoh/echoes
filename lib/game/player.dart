@@ -138,6 +138,7 @@ class Player extends PositionComponent
   double _invincibilityTimer = 0.0;
 
   bool hasDashed = false;
+  bool hasJumped = false;
   bool isDashing = false;
   double _dashTimer = 0.0;
   double _ghostTimer = 0.0;
@@ -183,11 +184,12 @@ class Player extends PositionComponent
     if (isOnGround) {
       velocity.y = -jumpForce;
       isOnGround = false;
+      hasJumped = true;
       _wasOnGround = false;
       _coyoteTimer = 0;
       _jumpBufferTimer = 0;
       game.jumpPool.start(volume: 0.5);
-    } else if (!hasDashed && !isDashing) {
+    } else if (hasJumped && !hasDashed && !isDashing) {
       isDashing = true;
       hasDashed = true;
       _dashTimer = 0.15; 
@@ -226,6 +228,7 @@ class Player extends PositionComponent
     if (isOnGround) {
       _coyoteTimer = 0.1;
       hasDashed = false;
+      hasJumped = false;
     } else {
       _coyoteTimer -= dt;
     }
@@ -235,6 +238,7 @@ class Player extends PositionComponent
       if (_coyoteTimer > 0) {
         velocity.y = -jumpForce;
         isOnGround = false;
+        hasJumped = true;
         _wasOnGround = false;
         _coyoteTimer = 0;
         _jumpBufferTimer = 0;
