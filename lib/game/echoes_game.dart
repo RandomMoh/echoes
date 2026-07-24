@@ -110,11 +110,11 @@ class EchoesGame extends FlameGame
     if (targetBgmLevel != _currentBgmLevel) {
       _currentBgmLevel = targetBgmLevel;
       if (targetBgmLevel == 1) {
-        FlameAudio.bgm.play('bgm.wav', volume: 0.3);
+        FlameAudio.bgm.play('bgm.ogg', volume: 0.3);
       } else if (targetBgmLevel == 2) {
-        FlameAudio.bgm.play('bgm_level2.wav', volume: 0.35);
+        FlameAudio.bgm.play('bgm_level2.ogg', volume: 0.35);
       } else {
-        FlameAudio.bgm.play('bgm_level3.wav', volume: 0.4);
+        FlameAudio.bgm.play('bgm_level3.ogg', volume: 0.4);
       }
     }
 
