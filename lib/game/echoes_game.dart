@@ -92,6 +92,9 @@ class EchoesGame extends FlameGame
     world.removeAll(world.children.query<Goal>());
     world.removeAll(world.children.query<Checkpoint>());
     world.removeAll(world.children.query<Player>());
+    world.removeAll(world.children.query<Crystal>());
+    world.removeAll(world.children.query<HeartPickup>());
+    world.removeAll(world.children.query<ScreenHitbox>());
 
     livesNotifier.value = 5;
 

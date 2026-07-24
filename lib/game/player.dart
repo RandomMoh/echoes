@@ -98,10 +98,9 @@ class Player extends PositionComponent
     }
 
     if (event is KeyDownEvent) {
-      if ((event.logicalKey == LogicalKeyboardKey.space ||
-              event.logicalKey == LogicalKeyboardKey.keyW ||
-              event.logicalKey == LogicalKeyboardKey.arrowUp) &&
-          isOnGround) {
+      if (event.logicalKey == LogicalKeyboardKey.space ||
+          event.logicalKey == LogicalKeyboardKey.keyW ||
+          event.logicalKey == LogicalKeyboardKey.arrowUp) {
         jump();
       }
     }
