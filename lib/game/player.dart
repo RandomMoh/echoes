@@ -12,6 +12,7 @@ import 'checkpoint.dart';
 import 'spike.dart';
 import 'goal.dart';
 import 'moving_platform.dart';
+import 'crumbling_platform.dart';
 
 class DashGhost extends PositionComponent {
   double life;
@@ -143,7 +144,7 @@ class Player extends PositionComponent
   double _dashTimer = 0.0;
   double _ghostTimer = 0.0;
 
-  StaticPlatform? currentPlatform;
+  PositionComponent? currentPlatform;
 
   Player({required Vector2 position})
     : super(position: position, size: Vector2(24, 24), anchor: Anchor.center) {
@@ -338,6 +339,10 @@ class Player extends PositionComponent
 
     if (other is StaticPlatform) {
       _resolvePlatformCollision(intersectionPoints, other);
+    } else if (other is CrumblingPlatform) {
+      if (!other.hasCrumbled) {
+        _resolvePlatformCollision(intersectionPoints, other);
+      }
     } else if (other is Spike) {
       if (_invincibilityTimer <= 0) die();
     } else if (other is Checkpoint && !other.isActive) {
@@ -362,7 +367,7 @@ class Player extends PositionComponent
     super.onCollision(intersectionPoints, other);
   }
 
-  void _resolvePlatformCollision(Set<Vector2> points, StaticPlatform platform) {
+  void _resolvePlatformCollision(Set<Vector2> points, PositionComponent platform) {
     final overlapX =
         (size.x / 2 + platform.size.x / 2) -
         (position.x - (platform.position.x + platform.size.x / 2)).abs();
