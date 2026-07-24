@@ -28,7 +28,7 @@ class CrumblingPlatform extends PositionComponent
     final center = position + size / 2;
     final distance = center.distanceTo(player.position);
 
-    if (player.isEchoing && distance < player.echoRadius) {
+    if (!hasCrumbled && player.isEchoing && distance < player.echoRadius) {
       opacity = 1.0;
     }
 
@@ -48,10 +48,7 @@ class CrumblingPlatform extends PositionComponent
         // Trigger a global screen shake when the platform collapses
         game.shakeCamera(0.2, 5.0);
         
-        // Disable collision
-        children.query<RectangleHitbox>().forEach((hitbox) {
-          hitbox.collisionType = CollisionType.inactive;
-        });
+        removeFromParent();
       }
     }
   }
