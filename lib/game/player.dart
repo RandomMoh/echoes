@@ -342,6 +342,9 @@ class Player extends PositionComponent
     } else if (other is CrumblingPlatform) {
       if (!other.hasCrumbled) {
         _resolvePlatformCollision(intersectionPoints, other);
+        if (currentPlatform == other) {
+          other.startCrumbling();
+        }
       }
     } else if (other is Spike) {
       if (_invincibilityTimer <= 0) die();

@@ -56,17 +56,16 @@ class CrumblingPlatform extends PositionComponent
     }
   }
   
+  void startCrumbling() {
+    if (!isCrumbling && !hasCrumbled) {
+      isCrumbling = true;
+      opacity = 1.0;
+    }
+  }
+
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollision(intersectionPoints, other);
-    if (other is Player && !isCrumbling && !hasCrumbled) {
-      // Player's anchor is center, so their bottom is position.y + size.y / 2
-      double playerBottom = other.position.y + other.size.y / 2;
-      if (other.velocity.y >= 0 && playerBottom <= position.y + 20) {
-        isCrumbling = true;
-        opacity = 1.0; // Stay lit while crumbling so the player sees it
-      }
-    }
   }
 
   @override
