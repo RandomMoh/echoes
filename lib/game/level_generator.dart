@@ -5,8 +5,8 @@ class LevelGenerator {
     final random = Random();
 
     int levelLength = 80 + (difficulty * 40);
-    int maxGap = 2 + difficulty;
-    if (maxGap > 4) maxGap = 4;
+    int maxGap = 3 + difficulty;
+    if (maxGap > 9) maxGap = 9;
 
     int maxJumpHeight = 3;
 
@@ -36,16 +36,16 @@ class LevelGenerator {
     int platformsSinceLastHeart = 0;
 
     while (currentX < width - 10) {
-      int minGap = 1;
-      if (difficulty > 3) minGap = 2;
-      if (difficulty > 7) minGap = 3;
+      int minGap = 2;
+      if (difficulty > 3) minGap = 4;
+      if (difficulty > 7) minGap = 6;
 
       int gap = random.nextInt(maxGap - minGap + 1) + minGap;
 
       bool willHaveMovingPlatform =
           difficulty >= 4 && random.nextDouble() < 0.2;
       if (willHaveMovingPlatform) {
-        gap = 8;
+        gap = max(10, gap + 4);
       }
 
       int heightChange = random.nextInt(6) - 2;

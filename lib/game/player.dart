@@ -13,6 +13,72 @@ import 'spike.dart';
 import 'goal.dart';
 import 'moving_platform.dart';
 
+class DashGhost extends PositionComponent {
+  double life;
+  double maxLife;
+  int facing;
+  bool isBlinking;
+
+  DashGhost({
+    required Vector2 position,
+    required this.facing,
+    required this.isBlinking,
+    this.life = 0.3,
+  }) : maxLife = 0.3,
+       super(position: position, size: Vector2(24, 24), anchor: Anchor.center);
+
+  @override
+  void update(double dt) {
+    life -= dt;
+    if (life <= 0) {
+      removeFromParent();
+    }
+  }
+
+  @override
+  void render(Canvas canvas) {
+    final paint = Paint()..isAntiAlias = false;
+    paint.color = Colors.white.withValues(alpha: (life / maxLife) * 0.5);
+
+    double breatheOffset = 0;
+
+    canvas.drawRect(
+      Rect.fromLTWH(0, breatheOffset, size.x, 20 - breatheOffset),
+      paint,
+    );
+
+    paint.color = const Color(0xFF18181B).withValues(alpha: (life / maxLife) * 0.5);
+    double eyeY = 4 + breatheOffset;
+    double eyeHeight = isBlinking ? 2 : 6;
+    double eyeWidth = 4;
+
+    if (facing == 1) {
+      canvas.drawRect(Rect.fromLTWH(12, eyeY, eyeWidth, eyeHeight), paint);
+      canvas.drawRect(Rect.fromLTWH(20, eyeY, eyeWidth, eyeHeight), paint);
+    } else {
+      canvas.drawRect(Rect.fromLTWH(0, eyeY, eyeWidth, eyeHeight), paint);
+      canvas.drawRect(Rect.fromLTWH(8, eyeY, eyeWidth, eyeHeight), paint);
+    }
+
+    double scarfStartX = facing == 1 ? 4.0 : size.x - 8.0;
+    double scarfY = 12.0 + breatheOffset;
+
+    for (int i = 0; i < 3; i++) {
+      double segmentX = scarfStartX - (facing * (i * 6));
+      canvas.drawRect(Rect.fromLTWH(segmentX, scarfY, 6, 6), paint);
+    }
+
+    paint.color = Colors.white.withValues(alpha: (life / maxLife) * 0.5);
+    if (facing == 1) {
+      canvas.drawRect(Rect.fromLTWH(4, 18, 6, 4), paint);
+      canvas.drawRect(Rect.fromLTWH(14, 18, 6, 4), paint);
+    } else {
+      canvas.drawRect(Rect.fromLTWH(14, 18, 6, 4), paint);
+      canvas.drawRect(Rect.fromLTWH(4, 18, 6, 4), paint);
+    }
+  }
+}
+
 class DustParticle extends PositionComponent {
   Vector2 velocity;
   double life;
@@ -71,6 +137,11 @@ class Player extends PositionComponent
   double _coyoteTimer = 0.0;
   double _invincibilityTimer = 0.0;
 
+  bool hasDashed = false;
+  bool isDashing = false;
+  double _dashTimer = 0.0;
+  double _ghostTimer = 0.0;
+
   StaticPlatform? currentPlatform;
 
   Player({required Vector2 position})
@@ -116,6 +187,16 @@ class Player extends PositionComponent
       _coyoteTimer = 0;
       _jumpBufferTimer = 0;
       game.jumpPool.start(volume: 0.5);
+    } else if (!hasDashed && !isDashing) {
+      isDashing = true;
+      hasDashed = true;
+      _dashTimer = 0.15; 
+      velocity.y = 0;
+      velocity.x = facing * 800;
+      game.echoPool.start(volume: 0.7);
+      
+      // Camera shake
+      game.camera.viewfinder.position = Vector2((math.Random().nextDouble() - 0.5) * 15, (math.Random().nextDouble() - 0.5) * 15);
     } else {
       _jumpBufferTimer = 0.15;
     }
@@ -144,6 +225,7 @@ class Player extends PositionComponent
 
     if (isOnGround) {
       _coyoteTimer = 0.1;
+      hasDashed = false;
     } else {
       _coyoteTimer -= dt;
     }
@@ -176,8 +258,32 @@ class Player extends PositionComponent
       facing = _horizontalInput;
     }
 
-    velocity.y += EchoesGame.gravity * dt;
-    velocity.y = velocity.y.clamp(-jumpForce, maxFallSpeed);
+    if (isDashing) {
+      _dashTimer -= dt;
+      velocity.y = 0; 
+      velocity.x = facing * 800; 
+      
+      _ghostTimer -= dt;
+      if (_ghostTimer <= 0) {
+        game.world.add(
+          DashGhost(
+            position: position.clone(),
+            facing: facing,
+            isBlinking: _isBlinking,
+          )
+        );
+        _ghostTimer = 0.03;
+      }
+
+      if (_dashTimer <= 0) {
+        isDashing = false;
+        velocity.x = _horizontalInput * moveSpeed; 
+        game.camera.viewfinder.position = Vector2.zero();
+      }
+    } else {
+      velocity.y += EchoesGame.gravity * dt;
+      velocity.y = velocity.y.clamp(-jumpForce, maxFallSpeed);
+    }
 
     position += velocity * dt;
 
@@ -245,6 +351,7 @@ class Player extends PositionComponent
       other.collect();
     } else if (other is Crystal && !other.isCollected) {
       other.collect();
+      hasDashed = false;
       game.echoPool.start(volume: 0.5);
       game.addCrystalScore(500);
     }
