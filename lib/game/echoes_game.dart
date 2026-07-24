@@ -59,6 +59,10 @@ class EchoesGame extends FlameGame
   late AudioPool deathPool;
   late AudioPool checkpointPool;
   late AudioPool winPool;
+  late AudioPool dashPool;
+  late AudioPool crystalPool;
+
+  int _currentBgmLevel = -1;
 
   @override
   Future<void> onLoad() async {
@@ -77,11 +81,12 @@ class EchoesGame extends FlameGame
       maxPlayers: 1,
     );
     winPool = await FlameAudio.createPool('win.wav', maxPlayers: 1);
+    dashPool = await FlameAudio.createPool('dash.wav', maxPlayers: 2);
+    crystalPool = await FlameAudio.createPool('crystal.wav', maxPlayers: 4);
 
     world.add(StarfieldBackground());
 
     FlameAudio.bgm.initialize();
-    FlameAudio.bgm.play('bgm.wav', volume: 0.3);
 
     await loadLevel();
   }
@@ -97,6 +102,21 @@ class EchoesGame extends FlameGame
     world.removeAll(world.children.query<ScreenHitbox>());
 
     livesNotifier.value = 5;
+
+    int targetBgmLevel = 1;
+    if (currentLevelIndex >= 8) targetBgmLevel = 3;
+    else if (currentLevelIndex >= 4) targetBgmLevel = 2;
+
+    if (targetBgmLevel != _currentBgmLevel) {
+      _currentBgmLevel = targetBgmLevel;
+      if (targetBgmLevel == 1) {
+        FlameAudio.bgm.play('bgm.wav', volume: 0.3);
+      } else if (targetBgmLevel == 2) {
+        FlameAudio.bgm.play('bgm_level2.wav', volume: 0.35);
+      } else {
+        FlameAudio.bgm.play('bgm_level3.wav', volume: 0.4);
+      }
+    }
 
     final levelMap = LevelData.generate(currentLevelIndex);
 

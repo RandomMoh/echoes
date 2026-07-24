@@ -193,7 +193,7 @@ class Player extends PositionComponent
       _dashTimer = 0.15; 
       velocity.y = 0;
       velocity.x = facing * 800;
-      game.echoPool.start(volume: 0.7);
+      game.dashPool.start(volume: 0.8);
       
       // Camera shake
       game.camera.viewfinder.position = Vector2((math.Random().nextDouble() - 0.5) * 15, (math.Random().nextDouble() - 0.5) * 15);
@@ -352,7 +352,7 @@ class Player extends PositionComponent
     } else if (other is Crystal && !other.isCollected) {
       other.collect();
       hasDashed = false;
-      game.echoPool.start(volume: 0.5);
+      game.crystalPool.start(volume: 0.6);
       game.addCrystalScore(500);
     }
     super.onCollision(intersectionPoints, other);
