@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../theme.dart';
 import '../game/echoes_game.dart';
 
@@ -21,7 +22,9 @@ class _MainMenuState extends State<MainMenu> {
   }
 
   Future<void> _checkReleaseNotes() async {
-    const currentVersion = '1.4.3';
+    final packageInfo = await PackageInfo.fromPlatform();
+    final currentVersion = packageInfo.version;
+
     final prefs = await SharedPreferences.getInstance();
     final lastSeen = prefs.getString('last_seen_version');
     if (lastSeen != currentVersion) {

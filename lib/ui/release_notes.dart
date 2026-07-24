@@ -1,12 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../theme.dart';
 import '../game/echoes_game.dart';
 
-class ReleaseNotesMenu extends StatelessWidget {
+class ReleaseNotesMenu extends StatefulWidget {
   final EchoesGame game;
 
   const ReleaseNotesMenu({super.key, required this.game});
+
+  @override
+  State<ReleaseNotesMenu> createState() => _ReleaseNotesMenuState();
+}
+
+class _ReleaseNotesMenuState extends State<ReleaseNotesMenu> {
+  String _version = '...';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVersion();
+  }
+
+  Future<void> _loadVersion() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      _version = packageInfo.version;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +46,7 @@ class ReleaseNotesMenu extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'UPDATE 1.4.3',
+                'UPDATE $_version',
                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
                   fontSize: 24,
                 ),
@@ -57,7 +78,7 @@ class ReleaseNotesMenu extends StatelessWidget {
               Center(
                 child: GestureDetector(
                   onTap: () {
-                    game.overlays.remove('releaseNotes');
+                    widget.game.overlays.remove('releaseNotes');
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(
