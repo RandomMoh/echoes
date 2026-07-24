@@ -10,7 +10,7 @@ class CrumblingPlatform extends PositionComponent
   double opacity = 0.0;
   bool isCrumbling = false;
   bool hasCrumbled = false;
-  double crumbleTimer = 0.5; // 0.5 seconds to jump off
+  double crumbleTimer = 1.2; // 1.2 seconds to jump off
   double _shakeX = 0.0;
 
   CrumblingPlatform({required Vector2 position, required Vector2 size})
