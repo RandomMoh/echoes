@@ -34,6 +34,7 @@ class LevelGenerator {
     currentX += 5;
     int platformsSinceLastStar = 2;
     int platformsSinceLastHeart = 0;
+    int platformsSinceLastSpring = 10;
 
     while (currentX < width - 10) {
       int minGap = 2;
@@ -63,6 +64,7 @@ class LevelGenerator {
       if (currentY > height - 6) currentY = height - 6;
 
       currentX += gap;
+      if (currentX >= width - 10) break;
 
       if (willHaveMovingPlatform) {
         int movingX = currentX - (gap ~/ 2);
@@ -105,11 +107,37 @@ class LevelGenerator {
           platformWidth >= 4 &&
           random.nextDouble() < min(0.4, difficulty * 0.05)) {
         int spikeX = currentX + (platformWidth ~/ 2);
-
         map[currentY - 1][spikeX] = '^';
       }
 
-      if (!isCrumblingPlatform && random.nextDouble() < 0.1) {
+      bool isWallObstacle = false;
+      if (difficulty >= 2 && 
+          !isCrumblingPlatform && 
+          !willHaveMovingPlatform && 
+          platformWidth >= 5 && 
+          random.nextDouble() < 0.15) {
+          
+          isWallObstacle = true;
+          int wallHeight = 2 + random.nextInt(2); // 2 to 3 tiles high, passable with normal jump
+          int wallX = currentX + platformWidth - 2; // Placed at the edge of the platform
+          
+          int wallTopY = currentY - wallHeight;
+          if (wallTopY < 3) wallTopY = 3;
+          
+          for (int wy = wallTopY; wy < wallTopY + wallHeight; wy++) {
+              if (wy < height - 3) {
+                  if (wy == wallTopY) {
+                      map[wy][wallX] = 'W';
+                      map[wy][wallX + 1] = 'w';
+                  } else {
+                      map[wy][wallX] = 'w';
+                      map[wy][wallX + 1] = 'w';
+                  }
+              }
+          }
+      }
+
+      if (!isCrumblingPlatform && !isWallObstacle && random.nextDouble() < 0.1) {
         map[currentY - 1][currentX + platformWidth - 1] = 'C';
       } else if (difficulty >= 3 &&
           platformsSinceLastStar > 15 &&

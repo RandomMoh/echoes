@@ -207,6 +207,17 @@ class EchoesGame extends FlameGame
                   size: sizeV,
                 ),
               );
+            } else if (char == 'w') {
+              // Ignore 'w', it's part of a vertical wall handled by 'W'
+            } else if (char == 'W') {
+              int wh = 1;
+              while (y + wh < levelMap.length && levelMap[y + wh][x] == 'w') {
+                wh++;
+              }
+              world.add(StaticPlatform(
+                position: pos,
+                size: Vector2(2 * tileSize, wh * tileSize),
+              ));
             } else if (char == 'V' || char == 'H') {
               world.add(
                 MovingPlatform(

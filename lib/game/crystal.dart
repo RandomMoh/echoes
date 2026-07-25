@@ -32,7 +32,7 @@ class Crystal extends PositionComponent
   void render(Canvas canvas) {
     final paint = Paint()
       ..isAntiAlias = false
-      ..color = Colors.cyanAccent
+      ..color = const Color(0xFF537895) // Dull blue
       ..style = PaintingStyle.fill;
 
     double cx = size.x / 2;

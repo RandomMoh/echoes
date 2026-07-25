@@ -4,16 +4,16 @@ import 'dart:math' as math;
 import 'echoes_game.dart';
 
 const List<Color> kLevelColors = [
-  Color(0xFF111114),
-  Color(0xFF13122E),
-  Color(0xFF021008),
-  Color(0xFF180404),
-  Color(0xFF151210),
-  Color(0xFF090F1A),
-  Color(0xFF0E1733),
-  Color(0xFF1C0A3E),
-  Color(0xFF141212),
-  Color(0xFF010E0A),
+  Color(0xFF111114), // level 1: dark grey
+  Color(0xFF14141B), // level 2: dull slate
+  Color(0xFF0C120E), // level 3: dull green
+  Color(0xFF161111), // level 4: dull red
+  Color(0xFF151312), // level 5: dull brown
+  Color(0xFF101216), // level 6: dull blue
+  Color(0xFF12141A), // level 7: dull indigo
+  Color(0xFF16131C), // level 8: dull purple
+  Color(0xFF141212), // level 9: dark grey
+  Color(0xFF0C1210), // level 10: dull teal
 ];
 
 class Star {

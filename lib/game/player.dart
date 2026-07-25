@@ -288,7 +288,7 @@ class Player extends PositionComponent
       }
     } else {
       velocity.y += EchoesGame.gravity * dt;
-      velocity.y = velocity.y.clamp(-jumpForce, maxFallSpeed);
+      velocity.y = velocity.y.clamp(-2000.0, maxFallSpeed);
     }
 
     position += velocity * dt;
