@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'echoes_game.dart';
 
-class Crystal extends PositionComponent with HasGameReference<EchoesGame>, CollisionCallbacks {
+class Crystal extends PositionComponent
+    with HasGameReference<EchoesGame>, CollisionCallbacks {
   double _time = 0;
   bool isCollected = false;
 

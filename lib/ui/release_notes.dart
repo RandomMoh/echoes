@@ -47,9 +47,9 @@ class _ReleaseNotesMenuState extends State<ReleaseNotesMenu> {
             children: [
               Text(
                 'UPDATE $_version',
-                style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                  fontSize: 24,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.displayLarge?.copyWith(fontSize: 24),
               ),
               const SizedBox(height: 16),
               Expanded(
@@ -91,13 +91,20 @@ class _ReleaseNotesMenuState extends State<ReleaseNotesMenu> {
                       vertical: 12,
                     ),
                     color: Colors.transparent,
-                    child: Text(
-                      '[ CLOSE ]',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: EchoesTheme.surface,
-                        fontSize: 14,
-                      ),
-                    ).animate(onPlay: (controller) => controller.repeat(reverse: true)).fade(begin: 1.0, end: 0.0, duration: 800.ms),
+                    child:
+                        Text(
+                              '[ CLOSE ]',
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(
+                                    color: EchoesTheme.surface,
+                                    fontSize: 14,
+                                  ),
+                            )
+                            .animate(
+                              onPlay: (controller) =>
+                                  controller.repeat(reverse: true),
+                            )
+                            .fade(begin: 1.0, end: 0.0, duration: 800.ms),
                   ),
                 ),
               ),

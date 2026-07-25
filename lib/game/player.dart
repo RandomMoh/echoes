@@ -48,7 +48,9 @@ class DashGhost extends PositionComponent {
       paint,
     );
 
-    paint.color = const Color(0xFF18181B).withValues(alpha: (life / maxLife) * 0.5);
+    paint.color = const Color(
+      0xFF18181B,
+    ).withValues(alpha: (life / maxLife) * 0.5);
     double eyeY = 4 + breatheOffset;
     double eyeHeight = isBlinking ? 2 : 6;
     double eyeWidth = 4;
@@ -193,12 +195,11 @@ class Player extends PositionComponent
     } else if (hasJumped && !hasDashed && !isDashing) {
       isDashing = true;
       hasDashed = true;
-      _dashTimer = 0.15; 
+      _dashTimer = 0.15;
       velocity.y = 0;
       velocity.x = facing * 800;
       game.dashPool.start(volume: 0.8);
-      
-      // Camera shake
+
       game.shakeCamera(0.2, 5.0);
     } else {
       _jumpBufferTimer = 0.15;
@@ -265,9 +266,9 @@ class Player extends PositionComponent
 
     if (isDashing) {
       _dashTimer -= dt;
-      velocity.y = 0; 
-      velocity.x = facing * 800; 
-      
+      velocity.y = 0;
+      velocity.x = facing * 800;
+
       _ghostTimer -= dt;
       if (_ghostTimer <= 0) {
         game.world.add(
@@ -275,14 +276,14 @@ class Player extends PositionComponent
             position: position.clone(),
             facing: facing,
             isBlinking: _isBlinking,
-          )
+          ),
         );
         _ghostTimer = 0.03;
       }
 
       if (_dashTimer <= 0) {
         isDashing = false;
-        velocity.x = _horizontalInput * moveSpeed; 
+        velocity.x = _horizontalInput * moveSpeed;
         game.camera.viewfinder.position = Vector2.zero();
       }
     } else {
@@ -370,7 +371,10 @@ class Player extends PositionComponent
     super.onCollision(intersectionPoints, other);
   }
 
-  void _resolvePlatformCollision(Set<Vector2> points, PositionComponent platform) {
+  void _resolvePlatformCollision(
+    Set<Vector2> points,
+    PositionComponent platform,
+  ) {
     final overlapX =
         (size.x / 2 + platform.size.x / 2) -
         (position.x - (platform.position.x + platform.size.x / 2)).abs();

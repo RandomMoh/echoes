@@ -4,16 +4,16 @@ import 'dart:math' as math;
 import 'echoes_game.dart';
 
 const List<Color> kLevelColors = [
-  Color(0xFF111114), // Level 0: near-black zinc
-  Color(0xFF13122E), // Level 1: muted indigo
-  Color(0xFF021008), // Level 2: muted forest green
-  Color(0xFF180404), // Level 3: very dull crimson
-  Color(0xFF151210), // Level 4: muted charcoal
-  Color(0xFF090F1A), // Level 5: muted midnight slate
-  Color(0xFF0E1733), // Level 6: muted navy
-  Color(0xFF1C0A3E), // Level 7: muted violet
-  Color(0xFF141212), // Level 8: muted stone
-  Color(0xFF010E0A), // Level 9: very dull emerald
+  Color(0xFF111114),
+  Color(0xFF13122E),
+  Color(0xFF021008),
+  Color(0xFF180404),
+  Color(0xFF151210),
+  Color(0xFF090F1A),
+  Color(0xFF0E1733),
+  Color(0xFF1C0A3E),
+  Color(0xFF141212),
+  Color(0xFF010E0A),
 ];
 
 class Star {
@@ -36,10 +36,7 @@ class StarfieldBackground extends PositionComponent
     for (int i = 0; i < count; i++) {
       _stars.add(
         Star(
-          Vector2(
-            _random.nextDouble() * 850,
-            _random.nextDouble() * 500,
-          ),
+          Vector2(_random.nextDouble() * 850, _random.nextDouble() * 500),
           _random.nextDouble() > 0.9 ? 2.0 : 1.0,
           _random.nextDouble() * 3 + 1,
           _random.nextDouble() * 0.5 + 0.1,
@@ -83,10 +80,9 @@ class StarfieldBackground extends PositionComponent
     double topEdge = cameraPos.y - screenH / 2;
 
     for (var star in _stars) {
-      // X parallax is subtle, Y parallax is much more subtle so stars feel
-      // astronomically far away during jumps (distant objects barely shift)
       double parallaxX = star.position.x - (cameraPos.x * (star.speed / 800.0));
-      double parallaxY = star.position.y - (cameraPos.y * (star.speed / 2000.0));
+      double parallaxY =
+          star.position.y - (cameraPos.y * (star.speed / 2000.0));
 
       double drawX = leftEdge + ((parallaxX - leftEdge) % screenW);
       if (drawX < leftEdge) drawX += screenW;

@@ -41,112 +41,119 @@ class _MainMenuState extends State<MainMenu> {
         child: Stack(
           children: [
             Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 64.0),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Spacer(),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 48.0,
+                vertical: 64.0,
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Spacer(),
 
-                Text(
-                      'ECHOES',
-                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                        fontSize: 48,
-                        height: 1.0,
-                        shadows: [
-                          const Shadow(
-                            color: Colors.white,
-                            offset: Offset(4, 4),
-                          ),
-                          const Shadow(
-                            color: Colors.black,
-                            offset: Offset(4, 4),
-                          ),
-                        ],
-                      ),
-                    )
-                    .animate()
-                    .fadeIn(duration: 1.seconds)
-                    .slideY(begin: -0.2, end: 0),
-
-                const SizedBox(height: 16),
-
-                Text(
-                  'IN THE DARK',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontSize: 16,
-                    letterSpacing: 4.0,
-                  ),
-                ).animate().fadeIn(delay: 500.ms, duration: 800.ms),
-
-                const Spacer(),
-
-                GestureDetector(
-                  onTap: () {
-                    widget.game.jumpPool.start(volume: 0.4);
-                    widget.game.overlays.remove('mainMenu');
-                    widget.game.overlays.add('hud');
-                    widget.game.resumeEngine();
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40,
-                      vertical: 16,
-                    ),
-                    color: Colors.transparent,
-                    child:
-                        Text(
-                              'PRESS START',
-                              style: Theme.of(context).textTheme.bodyLarge
-                                  ?.copyWith(
-                                    color: EchoesTheme.surface,
-                                    fontSize: 14,
-                                    letterSpacing: 2.0,
+                    Text(
+                          'ECHOES',
+                          style: Theme.of(context).textTheme.displayLarge
+                              ?.copyWith(
+                                fontSize: 48,
+                                height: 1.0,
+                                shadows: [
+                                  const Shadow(
+                                    color: Colors.white,
+                                    offset: Offset(4, 4),
                                   ),
-                            )
-                            .animate(
-                              onPlay: (controller) =>
-                                  controller.repeat(reverse: true),
-                            )
-                            .fade(begin: 1.0, end: 0.0, duration: 600.ms),
-                  ),
-                ).animate().fadeIn(delay: 1.seconds),
-                const Spacer(),
-              ],
+                                  const Shadow(
+                                    color: Colors.black,
+                                    offset: Offset(4, 4),
+                                  ),
+                                ],
+                              ),
+                        )
+                        .animate()
+                        .fadeIn(duration: 1.seconds)
+                        .slideY(begin: -0.2, end: 0),
+
+                    const SizedBox(height: 16),
+
+                    Text(
+                      'IN THE DARK',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontSize: 16,
+                        letterSpacing: 4.0,
+                      ),
+                    ).animate().fadeIn(delay: 500.ms, duration: 800.ms),
+
+                    const Spacer(),
+
+                    GestureDetector(
+                      onTap: () {
+                        widget.game.jumpPool.start(volume: 0.4);
+                        widget.game.overlays.remove('mainMenu');
+                        widget.game.overlays.add('hud');
+                        widget.game.resumeEngine();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 40,
+                          vertical: 16,
+                        ),
+                        color: Colors.transparent,
+                        child:
+                            Text(
+                                  'PRESS START',
+                                  style: Theme.of(context).textTheme.bodyLarge
+                                      ?.copyWith(
+                                        color: EchoesTheme.surface,
+                                        fontSize: 14,
+                                        letterSpacing: 2.0,
+                                      ),
+                                )
+                                .animate(
+                                  onPlay: (controller) =>
+                                      controller.repeat(reverse: true),
+                                )
+                                .fade(begin: 1.0, end: 0.0, duration: 600.ms),
+                      ),
+                    ).animate().fadeIn(delay: 1.seconds),
+                    const Spacer(),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
-        Positioned(
-          top: 24,
-          right: 24,
-          child: GestureDetector(
-            onTap: () {
-              widget.game.jumpPool.start(volume: 0.3);
-              widget.game.overlays.add('releaseNotes');
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                border: Border.all(
-                  color: EchoesTheme.surface.withValues(alpha: 0.5),
-                  width: 2,
-                ),
+            Positioned(
+              top: 24,
+              right: 24,
+              child: GestureDetector(
+                onTap: () {
+                  widget.game.jumpPool.start(volume: 0.3);
+                  widget.game.overlays.add('releaseNotes');
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(
+                      color: EchoesTheme.surface.withValues(alpha: 0.5),
+                      width: 2,
+                    ),
+                  ),
+                  child: Text(
+                    '[ WHAT\'S NEW ]',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: EchoesTheme.surface.withValues(alpha: 0.7),
+                      fontSize: 10,
+                      letterSpacing: 2.0,
+                    ),
+                  ),
+                ).animate().fadeIn(delay: 1.5.seconds, duration: 800.ms),
               ),
-              child: Text(
-                '[ WHAT\'S NEW ]',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: EchoesTheme.surface.withValues(alpha: 0.7),
-                  fontSize: 10,
-                  letterSpacing: 2.0,
-                ),
-              ),
-            ).animate().fadeIn(delay: 1.5.seconds, duration: 800.ms),
-          ),
+            ),
+          ],
         ),
-      ],
-    ),
-  ),
+      ),
     );
   }
 }

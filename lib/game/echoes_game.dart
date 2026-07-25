@@ -42,10 +42,7 @@ class EchoesGame extends FlameGame
   static const double gravity = 2000;
   static const double tileSize = 32;
 
-  EchoesGame()
-    : super(
-        camera: CameraComponent(),
-      );
+  EchoesGame() : super(camera: CameraComponent());
 
   @override
   void onGameResize(Vector2 size) {
@@ -114,8 +111,10 @@ class EchoesGame extends FlameGame
     livesNotifier.value = 5;
 
     int targetBgmLevel = 1;
-    if (currentLevelIndex >= 8) targetBgmLevel = 3;
-    else if (currentLevelIndex >= 4) targetBgmLevel = 2;
+    if (currentLevelIndex >= 8)
+      targetBgmLevel = 3;
+    else if (currentLevelIndex >= 4)
+      targetBgmLevel = 2;
 
     if (targetBgmLevel != _currentBgmLevel) {
       _currentBgmLevel = targetBgmLevel;
@@ -145,9 +144,19 @@ class EchoesGame extends FlameGame
           } else if (currentType != char) {
             double w = (x - startX) * tileSize;
             if (currentType == '#') {
-              world.add(StaticPlatform(position: Vector2(startX * tileSize, y * tileSize), size: Vector2(w, tileSize)));
+              world.add(
+                StaticPlatform(
+                  position: Vector2(startX * tileSize, y * tileSize),
+                  size: Vector2(w, tileSize),
+                ),
+              );
             } else if (currentType == '%') {
-              world.add(CrumblingPlatform(position: Vector2(startX * tileSize, y * tileSize), size: Vector2(w, tileSize)));
+              world.add(
+                CrumblingPlatform(
+                  position: Vector2(startX * tileSize, y * tileSize),
+                  size: Vector2(w, tileSize),
+                ),
+              );
             }
             startX = x;
             currentType = char;
@@ -156,9 +165,19 @@ class EchoesGame extends FlameGame
           if (startX != -1) {
             double w = (x - startX) * tileSize;
             if (currentType == '#') {
-              world.add(StaticPlatform(position: Vector2(startX * tileSize, y * tileSize), size: Vector2(w, tileSize)));
+              world.add(
+                StaticPlatform(
+                  position: Vector2(startX * tileSize, y * tileSize),
+                  size: Vector2(w, tileSize),
+                ),
+              );
             } else if (currentType == '%') {
-              world.add(CrumblingPlatform(position: Vector2(startX * tileSize, y * tileSize), size: Vector2(w, tileSize)));
+              world.add(
+                CrumblingPlatform(
+                  position: Vector2(startX * tileSize, y * tileSize),
+                  size: Vector2(w, tileSize),
+                ),
+              );
             }
             startX = -1;
             currentType = '';
@@ -211,7 +230,7 @@ class EchoesGame extends FlameGame
 
   void nextLevel() {
     currentLevelIndex++;
-    crystalScore = 0; // Reset crystal score on next level
+    crystalScore = 0;
     loadLevel();
   }
 
@@ -237,7 +256,7 @@ class EchoesGame extends FlameGame
 
     if (_shakeTimer > 0) {
       _shakeTimer -= dt;
-      // Because camera.follow is active, we apply a temporary offset to viewfinder position
+
       camera.viewfinder.position += Vector2(
         (math.Random().nextDouble() - 0.5) * _shakeIntensity,
         (math.Random().nextDouble() - 0.5) * _shakeIntensity,

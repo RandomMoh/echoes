@@ -10,7 +10,7 @@ class CrumblingPlatform extends PositionComponent
   double opacity = 0.0;
   bool isCrumbling = false;
   bool hasCrumbled = false;
-  double crumbleTimer = 1.2; // 1.2 seconds to jump off
+  double crumbleTimer = 1.2;
   double _shakeX = 0.0;
 
   CrumblingPlatform({required Vector2 position, required Vector2 size})
@@ -38,21 +38,20 @@ class CrumblingPlatform extends PositionComponent
 
     if (isCrumbling && !hasCrumbled) {
       crumbleTimer -= dt;
-      
-      // Vigorous shake effect by applying a random offset
+
       _shakeX = (math.Random().nextDouble() - 0.5) * 8.0;
 
       if (crumbleTimer <= 0) {
         hasCrumbled = true;
         opacity = 0.0;
-        // Trigger a global screen shake when the platform collapses
+
         game.shakeCamera(0.2, 5.0);
-        
+
         removeFromParent();
       }
     }
   }
-  
+
   void startCrumbling() {
     if (!isCrumbling && !hasCrumbled) {
       isCrumbling = true;
@@ -76,8 +75,7 @@ class CrumblingPlatform extends PositionComponent
 
     final paint = Paint()
       ..isAntiAlias = false
-      // Distinctly color the crumbling platform (e.g. orange-ish tint to stand out as dangerous if lit)
-      ..color = const Color(0xFFFF6B6B).withValues(alpha: opacity) 
+      ..color = const Color(0xFFFF6B6B).withValues(alpha: opacity)
       ..style = PaintingStyle.fill;
 
     canvas.drawRect(size.toRect(), paint);
@@ -87,12 +85,15 @@ class CrumblingPlatform extends PositionComponent
       ..color = Colors.black.withValues(alpha: opacity * 0.5)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
-    
-    // Add a crumbling texture pattern
+
     canvas.drawRect(Rect.fromLTWH(2, 2, size.x - 4, size.y - 4), borderPaint);
-    
+
     canvas.drawLine(const Offset(8, 2), Offset(14, size.y - 2), borderPaint);
-    canvas.drawLine(Offset(size.x - 10, 2), Offset(size.x - 18, size.y - 2), borderPaint);
+    canvas.drawLine(
+      Offset(size.x - 10, 2),
+      Offset(size.x - 18, size.y - 2),
+      borderPaint,
+    );
 
     canvas.restore();
   }
