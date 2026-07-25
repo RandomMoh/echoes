@@ -73,9 +73,10 @@ class CrumblingPlatform extends PositionComponent
       canvas.translate(_shakeX, 0);
     }
 
+    final paintColor = isCrumbling ? const Color(0xFFFF6B6B) : Colors.white;
     final paint = Paint()
       ..isAntiAlias = false
-      ..color = const Color(0xFFFF6B6B).withValues(alpha: opacity)
+      ..color = paintColor.withValues(alpha: opacity)
       ..style = PaintingStyle.fill;
 
     canvas.drawRect(size.toRect(), paint);

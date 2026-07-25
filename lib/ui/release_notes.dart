@@ -58,6 +58,7 @@ class _ReleaseNotesMenuState extends State<ReleaseNotesMenu> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
+                        '* MADE CRUMBLING PLATFORMS WHITE UNTIL STEPPED ON\n'
                         '* ADDED CRUMBLING PLATFORMS & SCREEN SHAKE\n'
                         '* FIXED GAPLESS AUDIO LOOPING BUG ON ANDROID\n'
                         '* UPDATED TO PERFECT BGM PROGRESSION SPEED\n'
