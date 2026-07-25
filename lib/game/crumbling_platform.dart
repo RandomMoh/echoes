@@ -11,14 +11,17 @@ class CrumblingPlatform extends PositionComponent
   bool isCrumbling = false;
   bool hasCrumbled = false;
   double crumbleTimer = 1.2;
+  double respawnTimer = 3.0;
   double _shakeX = 0.0;
+  late RectangleHitbox _hitbox;
 
   CrumblingPlatform({required Vector2 position, required Vector2 size})
     : super(position: position, size: size);
 
   @override
   Future<void> onLoad() async {
-    add(RectangleHitbox()..collisionType = CollisionType.passive);
+    _hitbox = RectangleHitbox()..collisionType = CollisionType.passive;
+    add(_hitbox);
   }
 
   @override
@@ -47,7 +50,17 @@ class CrumblingPlatform extends PositionComponent
 
         game.shakeCamera(0.2, 5.0);
 
-        removeFromParent();
+        _hitbox.collisionType = CollisionType.inactive;
+      }
+    } else if (hasCrumbled) {
+      respawnTimer -= dt;
+      if (respawnTimer <= 0) {
+        hasCrumbled = false;
+        isCrumbling = false;
+        crumbleTimer = 1.2;
+        respawnTimer = 3.0;
+        opacity = 0.0;
+        _hitbox.collisionType = CollisionType.passive;
       }
     }
   }
