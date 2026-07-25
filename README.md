@@ -1,30 +1,28 @@
 # Echoes
 
-Echoes is a 2D infinite runner and platformer built with Flutter and the Flame engine. I wanted to make an old school arcade style game that actually gets hard as you play it.
+I built Echoes because I wanted an old-school arcade platformer that actually pushes back. It's a 2D infinite runner made with Flutter and the Flame engine, and the difficulty curve doesn't mess around.
 
-## How it works
+## Mechanics
 
-You jump between platforms, avoid spikes, and try to survive as the game speeds up. The level generation throws moving platforms at you to cover large gaps. It starts out simple but gets pretty punishing by the time you reach level 5. 
+You jump between platforms, dodge spikes, and try not to fall off the screen as the game accelerates. The procedural generation starts throwing moving platforms, wide gaps, and crumbling floors at you pretty early on. You also have an active sonar ping mechanic to light up dark sections of the map. By level 5, the terrain gets actively hostile.
 
-We added blue crystals starting at level 3. If you manage to grab one without falling into a pit, you get 500 points. They only spawn a couple of times per level, so they are actually worth going out of your way for. 
+To make the risk-reward math a little harder, blue crystals start spawning at level 3. They're rare, usually placed over pits, and grab you 500 points if you survive the jump. Since the later levels burn through your lives quickly, I also scattered a few heart pickups into the generation pool to help you stretch a run slightly further.
 
-Because the later levels get so difficult, we also put in collectible hearts. They restore one life point. They use a classic retro animation and sound effect when you pick them up. 
-
-## Tech stack
+## Tech Stack
 
 The game runs on Flutter. I used:
-* Flame for the core game loop and physics
-* Flame Audio for sound effects and background music
-* Google Fonts (PressStart2P) for the retro text look
-* Shared Preferences to save high scores
+* **Flame** for the core game loop and collision physics
+* **Flame Audio** to handle the retro SFX and gapless background music
+* **Google Fonts (PressStart2P)** for the arcade typography
+* **Shared Preferences** to persist high scores locally
 
-## Running the project
+## Running the game
 
-If you have Flutter installed, you can build the APK or run it directly on an emulator or device. 
+If you have the Flutter SDK set up, you can compile the project or run it straight on an emulator.
 
 ```bash
 flutter pub get
 flutter run
 ```
 
-There are also prebuilt APK files in the `game_apks/` directory if you just want to install and play it on an Android phone.
+If you don't want to deal with compiling it, I keep prebuilt APKs in the `game_apks/` directory. Just drop the latest release onto an Android phone and install it.
