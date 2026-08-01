@@ -40,10 +40,20 @@ class GameHUD extends StatelessWidget {
           Positioned(
                 right: 32,
                 bottom: 32,
-                child: _buildControlButton(
-                  icon: Icons.keyboard_double_arrow_up,
-                  onPointerDown: () => game.jumpPlayer(),
-                  onPointerUp: () {},
+                child: Row(
+                  children: [
+                    _buildControlButton(
+                      icon: Icons.bolt,
+                      onPointerDown: () => game.dashPlayer(),
+                      onPointerUp: () {},
+                    ),
+                    const SizedBox(width: 20),
+                    _buildControlButton(
+                      icon: Icons.keyboard_double_arrow_up,
+                      onPointerDown: () => game.jumpPlayer(),
+                      onPointerUp: () {},
+                    ),
+                  ],
                 ),
               )
               .animate()

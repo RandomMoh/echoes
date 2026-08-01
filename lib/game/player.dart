@@ -177,6 +177,11 @@ class Player extends PositionComponent
           event.logicalKey == LogicalKeyboardKey.keyW ||
           event.logicalKey == LogicalKeyboardKey.arrowUp) {
         jump();
+      } else if (event.logicalKey == LogicalKeyboardKey.keyK ||
+                 event.logicalKey == LogicalKeyboardKey.shiftLeft ||
+                 event.logicalKey == LogicalKeyboardKey.shiftRight ||
+                 event.logicalKey == LogicalKeyboardKey.keyJ) {
+        dash();
       }
     }
 
@@ -184,26 +189,39 @@ class Player extends PositionComponent
   }
 
   void jump() {
-    if (isOnGround) {
-      velocity.y = -jumpForce;
-      isOnGround = false;
-      hasJumped = true;
-      _wasOnGround = false;
-      _coyoteTimer = 0;
-      _jumpBufferTimer = 0;
-      game.jumpPool.start(volume: 0.5);
-    } else if (hasJumped && !hasDashed && !isDashing) {
+    if (isOnGround || _coyoteTimer > 0) {
+      _executeJump();
+    } else if (!hasDashed && !isDashing) {
+      dash();
+    } else {
+      _jumpBufferTimer = 0.15;
+    }
+  }
+
+  void dash() {
+    if (!hasDashed && !isDashing) {
       isDashing = true;
       hasDashed = true;
       _dashTimer = 0.15;
       velocity.y = 0;
       velocity.x = facing * 800;
-      game.dashPool.start(volume: 0.8);
-
+      try {
+        game.dashPool.start(volume: 0.8);
+      } catch (_) {}
       game.shakeCamera(0.2, 5.0);
-    } else {
-      _jumpBufferTimer = 0.15;
     }
+  }
+
+  void _executeJump() {
+    velocity.y = -jumpForce;
+    isOnGround = false;
+    hasJumped = true;
+    _wasOnGround = false;
+    _coyoteTimer = 0;
+    _jumpBufferTimer = 0;
+    try {
+      game.jumpPool.start(volume: 0.5);
+    } catch (_) {}
   }
 
   void moveLeft() => _horizontalInput = -1;
@@ -213,7 +231,9 @@ class Player extends PositionComponent
   void triggerEcho() {
     isEchoing = true;
     echoRadius = 0;
-    game.echoPool.start(volume: 0.6);
+    try {
+      game.echoPool.start(volume: 0.6);
+    } catch (_) {}
 
     game.world.add(
       EchoWave(position: position + size / 2, maxRadius: 1500, speed: 1200),
@@ -237,14 +257,8 @@ class Player extends PositionComponent
 
     if (_jumpBufferTimer > 0) {
       _jumpBufferTimer -= dt;
-      if (_coyoteTimer > 0) {
-        velocity.y = -jumpForce;
-        isOnGround = false;
-        hasJumped = true;
-        _wasOnGround = false;
-        _coyoteTimer = 0;
-        _jumpBufferTimer = 0;
-        game.jumpPool.start(volume: 0.5);
+      if (isOnGround || _coyoteTimer > 0) {
+        _executeJump();
       }
     }
 

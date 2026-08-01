@@ -98,15 +98,10 @@ class EchoesGame extends FlameGame
   }
 
   Future<void> loadLevel() async {
-    world.removeAll(world.children.query<StaticPlatform>());
-    world.removeAll(world.children.query<CrumblingPlatform>());
-    world.removeAll(world.children.query<Spike>());
-    world.removeAll(world.children.query<Goal>());
-    world.removeAll(world.children.query<Checkpoint>());
-    world.removeAll(world.children.query<Player>());
-    world.removeAll(world.children.query<Crystal>());
-    world.removeAll(world.children.query<HeartPickup>());
-    world.removeAll(world.children.query<ScreenHitbox>());
+    final toRemove = world.children.where((c) => c is! StarfieldBackground).toList();
+    for (final child in toRemove) {
+      child.removeFromParent();
+    }
 
     livesNotifier.value = 5;
 
@@ -236,6 +231,7 @@ class EchoesGame extends FlameGame
 
     world.add(ScreenHitbox());
 
+    camera.stop();
     camera.follow(player, horizontalOnly: false, verticalOnly: false);
   }
 
@@ -249,6 +245,7 @@ class EchoesGame extends FlameGame
   void movePlayerRight() => player.moveRight();
   void stopPlayer() => player.stopMoving();
   void jumpPlayer() => player.jump();
+  void dashPlayer() => player.dash();
 
   @override
   void update(double dt) {

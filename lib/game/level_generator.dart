@@ -34,7 +34,6 @@ class LevelGenerator {
     currentX += 5;
     int platformsSinceLastStar = 2;
     int platformsSinceLastHeart = 0;
-    int platformsSinceLastSpring = 10;
 
     while (currentX < width - 10) {
       int minGap = 2;
