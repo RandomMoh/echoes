@@ -36,6 +36,7 @@ class EchoesGame extends FlameGame
   final ValueNotifier<String> buttonStyleNotifier = ValueNotifier<String>(
     'Square',
   );
+  final ValueNotifier<bool> canDashNotifier = ValueNotifier<bool>(false);
 
   late SharedPreferences prefs;
 

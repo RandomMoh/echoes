@@ -40,20 +40,27 @@ class GameHUD extends StatelessWidget {
           Positioned(
                 right: 32,
                 bottom: 32,
-                child: Row(
-                  children: [
-                    _buildControlButton(
-                      icon: Icons.bolt,
-                      onPointerDown: () => game.dashPlayer(),
-                      onPointerUp: () {},
-                    ),
-                    const SizedBox(width: 20),
-                    _buildControlButton(
-                      icon: Icons.keyboard_double_arrow_up,
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: game.canDashNotifier,
+                  builder: (context, canDash, child) {
+                    return _buildControlButton(
+                      icon: canDash ? null : Icons.keyboard_double_arrow_up,
+                      customChild: canDash
+                          ? ValueListenableBuilder<String>(
+                              valueListenable: game.buttonSizeNotifier,
+                              builder: (context, sizeType, child) {
+                                double iconSize = sizeType == 'Small' ? 32.0 : 48.0;
+                                return PixelDashRunner(
+                                  size: iconSize,
+                                  color: EchoesTheme.surface,
+                                );
+                              },
+                            )
+                          : null,
                       onPointerDown: () => game.jumpPlayer(),
                       onPointerUp: () {},
-                    ),
-                  ],
+                    );
+                  },
                 ),
               )
               .animate()
@@ -216,7 +223,8 @@ class GameHUD extends StatelessWidget {
   }
 
   Widget _buildControlButton({
-    required IconData icon,
+    IconData? icon,
+    Widget? customChild,
     required VoidCallback onPointerDown,
     required VoidCallback onPointerUp,
   }) {
@@ -260,7 +268,8 @@ class GameHUD extends StatelessWidget {
                 height: size,
                 decoration: decoration,
                 child: Center(
-                  child: Icon(icon, color: EchoesTheme.surface, size: iconSize),
+                  child: customChild ??
+                      Icon(icon, color: EchoesTheme.surface, size: iconSize),
                 ),
               ),
             );
@@ -269,6 +278,65 @@ class GameHUD extends StatelessWidget {
       },
     );
   }
+}
+
+class PixelDashRunner extends StatelessWidget {
+  final double size;
+  final Color color;
+  const PixelDashRunner({super.key, required this.size, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: Size(size, size),
+      painter: _DashRunnerPainter(color),
+    );
+  }
+}
+
+class _DashRunnerPainter extends CustomPainter {
+  final Color color;
+  _DashRunnerPainter(this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..isAntiAlias = false;
+
+    const grid = 10;
+    final w = size.width / grid;
+    final h = size.height / grid;
+
+    void drawPixel(int x, int y) {
+      canvas.drawRect(Rect.fromLTWH(x * w, y * h, w, h), paint);
+    }
+
+    final pixels = [
+      // Head
+      [5, 1], [6, 1],
+      [5, 2], [6, 2],
+      // Torso & Body (leaning forward)
+      [4, 3], [5, 3], [6, 3],
+      [3, 4], [4, 4], [5, 4], [6, 4],
+      // Arms (one forward, one back)
+      [2, 3], [7, 4], [8, 4],
+      // Legs (dashing stride)
+      [2, 5], [3, 5], [5, 5], [6, 5],
+      [1, 6], [6, 6], [7, 6],
+      // Speed / Dash Motion Lines Behind
+      [0, 2], [1, 2],
+      [0, 4],
+      [0, 6], [1, 6],
+    ];
+
+    for (var p in pixels) {
+      drawPixel(p[0], p[1]);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DashRunnerPainter old) => color != old.color;
 }
 
 class PixelHeart extends StatelessWidget {

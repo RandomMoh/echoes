@@ -255,6 +255,11 @@ class Player extends PositionComponent
       _coyoteTimer -= dt;
     }
 
+    bool showDashIcon = isDashing || (!isOnGround && !hasDashed);
+    if (game.canDashNotifier.value != showDashIcon) {
+      game.canDashNotifier.value = showDashIcon;
+    }
+
     if (_jumpBufferTimer > 0) {
       _jumpBufferTimer -= dt;
       if (isOnGround || _coyoteTimer > 0) {
